@@ -25,9 +25,9 @@ public class CopperCauldronBlock extends AbstractCopperCauldronBlock {
     }
 
     public static boolean canFillWithPrecipitation(World world, Biome.Precipitation precipitation) {
-        if (precipitation == Biome.Precipitation.field_9382) {
+        if (precipitation == Biome.Precipitation.RAIN) {
             return world.getRandom().nextFloat() < 0.2F;
-        } else if (precipitation == Biome.Precipitation.field_9383) {
+        } else if (precipitation == Biome.Precipitation.SNOW) {
             return world.getRandom().nextFloat() < 0.15F;
         } else {
             return false;
@@ -37,12 +37,12 @@ public class CopperCauldronBlock extends AbstractCopperCauldronBlock {
     @Override
     public void precipitationTick(BlockState state, World world, BlockPos pos, Biome.Precipitation precipitation) {
         if (canFillWithPrecipitation(world, precipitation)) {
-            if (precipitation == Biome.Precipitation.field_9382) {
+            if (precipitation == Biome.Precipitation.RAIN) {
                 world.setBlockState(pos, BlockInit.COPPER_PURIFIED_WATER_CAULDRON_BLOCK.getDefaultState());
-                world.emitGameEvent(null, GameEvent.field_28166, pos);
-            } else if (precipitation == Biome.Precipitation.field_9383) {
+                world.emitGameEvent(null, GameEvent.FLUID_PLACE, pos);
+            } else if (precipitation == Biome.Precipitation.SNOW) {
                 world.setBlockState(pos, BlockInit.COPPER_POWDERED_CAULDRON_BLOCK.getDefaultState());
-                world.emitGameEvent(null, GameEvent.field_28166, pos);
+                world.emitGameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
         }
@@ -58,7 +58,7 @@ public class CopperCauldronBlock extends AbstractCopperCauldronBlock {
         if (fluid == Fluids.WATER || fluid == FluidInit.PURIFIED_WATER) {
             world.setBlockState(pos, BlockInit.COPPER_PURIFIED_WATER_CAULDRON_BLOCK.getDefaultState());
             world.syncWorldEvent(WorldEvents.POINTED_DRIPSTONE_DRIPS_WATER_INTO_CAULDRON, pos, 0);
-            world.emitGameEvent(null, GameEvent.field_28166, pos);
+            world.emitGameEvent(null, GameEvent.FLUID_PLACE, pos);
         }
 
     }

@@ -70,8 +70,8 @@ public class LeatherFlask extends Item {
                                 }
                                 player.getWorld().setBlockState(pos, state.cycle(LeveledCauldronBlock.LEVEL));
                             } else {
-                                player.getWorld().setBlockState(pos, Blocks.field_27097.getDefaultState());
-                                player.getWorld().emitGameEvent(null, GameEvent.field_28733, pos);
+                                player.getWorld().setBlockState(pos, Blocks.WATER_CAULDRON.getDefaultState());
+                                player.getWorld().emitGameEvent(null, GameEvent.BLOCK_CHANGE, pos);
                             }
                         } else if (state.getBlock() instanceof AbstractCopperCauldronBlock) {
                             if (state.getBlock() instanceof CopperLeveledCauldronBlock) {
@@ -90,7 +90,7 @@ public class LeatherFlask extends Item {
                                 } else {
                                     player.getWorld().setBlockState(pos, BlockInit.COPPER_WATER_CAULDRON_BLOCK.getDefaultState());
                                 }
-                                player.getWorld().emitGameEvent(null, GameEvent.field_28733, pos);
+                                player.getWorld().emitGameEvent(null, GameEvent.BLOCK_CHANGE, pos);
                             }
                         } else {
                             if (((CampfireCauldronBlock) state.getBlock()).isFull(state)) {
@@ -98,8 +98,8 @@ public class LeatherFlask extends Item {
                             }
                             player.getWorld().setBlockState(pos, state.cycle(CampfireCauldronBlock.LEVEL));
                         }
-                        player.getWorld().playSound(null, pos, SoundInit.EMPTY_FLASK_EVENT, SoundCategory.field_15245, 1.0F, 1.0F);
-                        player.incrementStat(Stats.field_15373);
+                        player.getWorld().playSound(null, pos, SoundInit.EMPTY_FLASK_EVENT, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                        player.incrementStat(Stats.USE_CAULDRON);
 
                         if (flaskComponent.fillLevel() > 0) {
                             itemStack.set(ItemInit.FLASK_DATA, new FlaskComponent(flaskComponent.fillLevel() - 1, flaskComponent.qualityLevel()));
@@ -110,8 +110,8 @@ public class LeatherFlask extends Item {
             } else if (state.getBlock() instanceof LeveledCauldronBlock && state.get(LeveledCauldronBlock.LEVEL) > 0 && flaskComponent.fillLevel() < 2 + this.addition) {
                 // Fill up flask
                 if (!player.getWorld().isClient()) {
-                    player.getWorld().playSound(null, pos, SoundInit.FILL_FLASK_EVENT, SoundCategory.field_15245, 1.0F, 1.0F);
-                    player.incrementStat(Stats.field_15373);
+                    player.getWorld().playSound(null, pos, SoundInit.FILL_FLASK_EVENT, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                    player.incrementStat(Stats.USE_CAULDRON);
                     LeveledCauldronBlock.decrementFluidLevel(state, player.getWorld(), pos);
                     itemStack.set(ItemInit.FLASK_DATA, new FlaskComponent(flaskComponent.fillLevel() + 1, 2));
                 }
@@ -125,14 +125,14 @@ public class LeatherFlask extends Item {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
         FlaskComponent flaskComponent = itemStack.getOrDefault(ItemInit.FLASK_DATA, FlaskComponent.DEFAULT);
-        BlockHitResult hitResult = raycast(world, user, RaycastContext.FluidHandling.field_1345);
+        BlockHitResult hitResult = raycast(world, user, RaycastContext.FluidHandling.SOURCE_ONLY);
         BlockPos blockPos = hitResult.getBlockPos();
 
 
-        if (hitResult.getType() == HitResult.Type.field_1332 && world.canEntityModifyAt(user, blockPos) && world.getFluidState(blockPos).isIn(FluidTags.field_15517)) {
+        if (hitResult.getType() == HitResult.Type.BLOCK && world.canEntityModifyAt(user, blockPos) && world.getFluidState(blockPos).isIn(FluidTags.WATER)) {
             if (user.isSneaking() && flaskComponent.fillLevel() != 0) {
                 itemStack.set(ItemInit.FLASK_DATA, new FlaskComponent(0, flaskComponent.qualityLevel()));
-                world.playSound(user, user.getX(), user.getY(), user.getZ(), SoundInit.EMPTY_FLASK_EVENT, SoundCategory.field_15254, 1.0F, 1.0F);
+                world.playSound(user, user.getX(), user.getY(), user.getZ(), SoundInit.EMPTY_FLASK_EVENT, SoundCategory.NEUTRAL, 1.0F, 1.0F);
                 return TypedActionResult.consume(itemStack);
             }
             if (flaskComponent.fillLevel() < 2 + addition) {
@@ -145,12 +145,12 @@ public class LeatherFlask extends Item {
                     waterPurity = 1;
                 }
 
-                boolean riverWater = world.getBiome(blockPos).isIn(BiomeTags.field_36511);
+                boolean riverWater = world.getBiome(blockPos).isIn(BiomeTags.IS_RIVER);
                 if (riverWater && (isEmpty || (!isEmpty && !isDirtyWater))) {
                     waterPurity = 0;
                 }
 
-                world.playSound(user, user.getX(), user.getY(), user.getZ(), SoundInit.FILL_FLASK_EVENT, SoundCategory.field_15254, 1.0F, 1.0F);
+                world.playSound(user, user.getX(), user.getY(), user.getZ(), SoundInit.FILL_FLASK_EVENT, SoundCategory.NEUTRAL, 1.0F, 1.0F);
                 itemStack.set(ItemInit.FLASK_DATA, new FlaskComponent(fillLevel, waterPurity));
                 return TypedActionResult.consume(itemStack);
             }
@@ -169,7 +169,7 @@ public class LeatherFlask extends Item {
             if (user instanceof ServerPlayerEntity serverPlayerEntity) {
                 Criteria.CONSUME_ITEM.trigger(serverPlayerEntity, stack);
             }
-            playerEntity.incrementStat(Stats.field_15372.getOrCreateStat(this));
+            playerEntity.incrementStat(Stats.USED.getOrCreateStat(this));
             if (!playerEntity.isCreative()) {
                 stack.set(ItemInit.FLASK_DATA, new FlaskComponent(flaskComponent.fillLevel() - 1, flaskComponent.qualityLevel()));
                 ThirstManager thirstManager = ((ThirstManagerAccess) user).getThirstManager();
@@ -196,9 +196,9 @@ public class LeatherFlask extends Item {
     public UseAction getUseAction(ItemStack stack) {
         FlaskComponent flaskComponent = stack.getOrDefault(ItemInit.FLASK_DATA, FlaskComponent.DEFAULT);
         if (flaskComponent.fillLevel() > 0) {
-            return UseAction.field_8946;
+            return UseAction.DRINK;
         } else {
-            return UseAction.field_8952;
+            return UseAction.NONE;
         }
     }
 
@@ -206,7 +206,7 @@ public class LeatherFlask extends Item {
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
         FlaskComponent flaskComponent = stack.getOrDefault(ItemInit.FLASK_DATA, FlaskComponent.DEFAULT);
         if (stack.get(ItemInit.FLASK_DATA) != null) {
-            tooltip.add(Text.translatable("item.dehydration.leather_flask.tooltip", flaskComponent.fillLevel(), addition + 2).formatted(Formatting.field_1080));
+            tooltip.add(Text.translatable("item.dehydration.leather_flask.tooltip", flaskComponent.fillLevel(), addition + 2).formatted(Formatting.GRAY));
             if (flaskComponent.fillLevel() > 0) {
                 String string = "dirty";
                 if (flaskComponent.qualityLevel() == 1) {
@@ -217,7 +217,7 @@ public class LeatherFlask extends Item {
                 tooltip.add(Text.translatable("item.dehydration.leather_flask.tooltip3." + string));
             }
         } else {
-            tooltip.add(Text.translatable("item.dehydration.leather_flask.tooltip2", addition + 2).formatted(Formatting.field_1080));
+            tooltip.add(Text.translatable("item.dehydration.leather_flask.tooltip2", addition + 2).formatted(Formatting.GRAY));
         }
         super.appendTooltip(stack, context, tooltip, type);
     }

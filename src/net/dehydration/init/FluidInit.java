@@ -25,17 +25,17 @@ public class FluidInit {
     public static void init() {
         // BucketItem storages are added by Fabric
         // Register empty bottle storage for purified water
-        FluidStorage.combinedItemApiProvider(Items.field_8469).register(context -> new EmptyItemFluidStorage(context, emptyBottle -> {
+        FluidStorage.combinedItemApiProvider(Items.GLASS_BOTTLE).register(context -> new EmptyItemFluidStorage(context, emptyBottle -> {
             ItemStack newStack = emptyBottle.toStack();
-            newStack.set(DataComponentTypes.field_49651, new PotionContentsComponent(ItemInit.PURIFIED_WATER));
-            return ItemVariant.of(Items.field_8574, newStack.getComponentChanges());
+            newStack.set(DataComponentTypes.POTION_CONTENTS, new PotionContentsComponent(ItemInit.PURIFIED_WATER));
+            return ItemVariant.of(Items.POTION, newStack.getComponentChanges());
         }, FluidInit.PURIFIED_WATER, FluidConstants.BOTTLE));
         // Register purified water potion storage
-        FluidStorage.combinedItemApiProvider(Items.field_8574).register(PurifiedWaterPotionStorage::find);
+        FluidStorage.combinedItemApiProvider(Items.POTION).register(PurifiedWaterPotionStorage::find);
         // Register flask storage
         FluidStorage.ITEM.registerForItems((itemStack, context) -> new LeatherFlaskFluidStorage(context), ItemInit.LEATHER_FLASK, ItemInit.IRON_LEATHER_FLASK, ItemInit.GOLDEN_LEATHER_FLASK, ItemInit.DIAMOND_LEATHER_FLASK, ItemInit.NETHERITE_LEATHER_FLASK);
         // Register bowl storage
-        FluidStorage.ITEM.registerForItems(BowlFluidStorage::new, Items.field_8428, ItemInit.WATER_BOWL, ItemInit.PURIFIED_WATER_BOWL);
+        FluidStorage.ITEM.registerForItems(BowlFluidStorage::new, Items.BOWL, ItemInit.WATER_BOWL, ItemInit.PURIFIED_WATER_BOWL);
         // Register campfire cauldron storage
         FluidStorage.SIDED.registerForBlocks((world, pos, state, blockEntity, context) -> new CampfireCauldronFluidStorage(world, pos, state, (CampfireCauldronEntity) blockEntity), BlockInit.CAMPFIRE_CAULDRON_BLOCK);
         //register copper cauldron fluid storage

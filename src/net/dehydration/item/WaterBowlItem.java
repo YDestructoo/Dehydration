@@ -62,7 +62,7 @@ public class WaterBowlItem extends Item {
                 return itemStack;
             }
         }
-        return new ItemStack(Items.field_8428);
+        return new ItemStack(Items.BOWL);
     }
 
     @Override
@@ -72,18 +72,18 @@ public class WaterBowlItem extends Item {
 
     @Override
     public UseAction getUseAction(ItemStack stack) {
-        return UseAction.field_8946;
+        return UseAction.DRINK;
     }
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        BlockHitResult hitResult = raycast(world, user, RaycastContext.FluidHandling.field_1345);
+        BlockHitResult hitResult = raycast(world, user, RaycastContext.FluidHandling.SOURCE_ONLY);
         BlockPos blockPos = hitResult.getBlockPos();
 
         FluidState fluidState = world.getFluidState(blockPos);
-        if (hitResult.getType() == HitResult.Type.field_1332 && world.canEntityModifyAt(user, blockPos) && fluidState.isIn(FluidTags.field_15517) && user.isSneaking()) {
-            world.playSound(user, user.getX(), user.getY(), user.getZ(), SoundEvents.field_14834, SoundCategory.field_15254, 1.0F, 1.0F);
-            return TypedActionResult.consume(new ItemStack(Items.field_8428));
+        if (hitResult.getType() == HitResult.Type.BLOCK && world.canEntityModifyAt(user, blockPos) && fluidState.isIn(FluidTags.WATER) && user.isSneaking()) {
+            world.playSound(user, user.getX(), user.getY(), user.getZ(), SoundEvents.ITEM_BUCKET_EMPTY, SoundCategory.NEUTRAL, 1.0F, 1.0F);
+            return TypedActionResult.consume(new ItemStack(Items.BOWL));
         }
 
         return ItemUsage.consumeHeldItem(world, user, hand);

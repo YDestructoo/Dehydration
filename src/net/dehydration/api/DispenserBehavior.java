@@ -20,7 +20,7 @@ public class DispenserBehavior {
             public ItemStack dispenseSilently(BlockPointer pointer, ItemStack stack) {
                 this.setSuccess(false);
                 ServerWorld world = pointer.world();
-                BlockPos pos = pointer.comp_1968().offset(pointer.comp_1969().get(DispenserBlock.FACING));
+                BlockPos pos = pointer.pos().offset(pointer.state().get(DispenserBlock.FACING));
                 BlockState blockState = world.getBlockState(pos);
 
                 if (blockState.isOf(BlockInit.CAMPFIRE_CAULDRON_BLOCK)) {

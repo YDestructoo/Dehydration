@@ -10,8 +10,8 @@ import net.dehydration.effect.*;
 
 public class EffectInit {
 
-    public final static RegistryEntry<StatusEffect> THIRST = register("dehydration:thirst_effect", new ThirstEffect(StatusEffectCategory.field_18272, 3062757));
-    public final static RegistryEntry<StatusEffect> HYDRATION = register("dehydration:hydration_effect", new HydrationEffect(StatusEffectCategory.field_18271, 3062757));
+    public final static RegistryEntry<StatusEffect> THIRST = register("dehydration:thirst_effect", new ThirstEffect(StatusEffectCategory.HARMFUL, 3062757));
+    public final static RegistryEntry<StatusEffect> HYDRATION = register("dehydration:hydration_effect", new HydrationEffect(StatusEffectCategory.BENEFICIAL, 3062757));
 
     public static void init() {
     }

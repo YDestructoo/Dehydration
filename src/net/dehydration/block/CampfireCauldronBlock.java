@@ -79,12 +79,12 @@ public class CampfireCauldronBlock extends Block implements BlockEntityProvider 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         Direction direction = state.get(FACING);
-        return direction.getAxis() == Direction.Axis.field_11048 ? X_BASE_SHAPE : Z_BASE_SHAPE;
+        return direction.getAxis() == Direction.Axis.X ? X_BASE_SHAPE : Z_BASE_SHAPE;
     }
 
     @Override
     public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-        return world.getBlockState(pos.down()).isIn(BlockTags.field_23799);
+        return world.getBlockState(pos.down()).isIn(BlockTags.CAMPFIRES);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class CampfireCauldronBlock extends Block implements BlockEntityProvider 
         if (CopperCauldronBlock.canFillWithPrecipitation(world, precipitation)) {
             if (state.get(LEVEL) < 4) {
                 this.setLevel(world, pos, state, state.get(LEVEL) + 1);
-                world.emitGameEvent(null, GameEvent.field_28166, pos);
+                world.emitGameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
         }
     }
@@ -138,7 +138,7 @@ public class CampfireCauldronBlock extends Block implements BlockEntityProvider 
     @Environment(EnvType.CLIENT)
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
         if (random.nextInt(12) == 0 && this.isFireBurning(world, pos) && state.get(LEVEL) > 0) {
-            world.playSoundClient((double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, SoundInit.CAULDRON_BUBBLE_EVENT, SoundCategory.field_15245, 0.5F,
+            world.playSoundClient((double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, SoundInit.CAULDRON_BUBBLE_EVENT, SoundCategory.BLOCKS, 0.5F,
                     random.nextFloat() * 0.4F + 0.8F, false);
         }
     }
@@ -170,7 +170,7 @@ public class CampfireCauldronBlock extends Block implements BlockEntityProvider 
         BlockPos blockPos = PointedDripstoneBlock.getDripPos(world, pos);
         if (blockPos != null) {
             Fluid fluid = PointedDripstoneBlock.getDripFluid(world, (BlockPos) blockPos);
-            if (fluid != Fluids.field_15906 && this.canBeFilledByDripstone(fluid)) {
+            if (fluid != Fluids.EMPTY && this.canBeFilledByDripstone(fluid)) {
                 this.fillFromDripstone(state, world, pos, fluid);
             }
         }

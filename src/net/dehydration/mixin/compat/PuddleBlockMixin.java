@@ -29,10 +29,10 @@ public class PuddleBlockMixin {
             FlaskComponent flaskComponent = stack.getOrDefault(ItemInit.FLASK_DATA, FlaskComponent.DEFAULT);
             if (flaskComponent.fillLevel() < 2 + leatherFlask.getExtraFillLevel()) {
                 if (!world.isClient()) {
-                    world.setBlockState(pos, Blocks.field_10124.getDefaultState());
+                    world.setBlockState(pos, Blocks.AIR.getDefaultState());
                     LeatherFlask.fillFlask(stack, 2);
                 }
-                world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundInit.FILL_FLASK_EVENT, SoundCategory.field_15254, 1.0F, 1.0F);
+                world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundInit.FILL_FLASK_EVENT, SoundCategory.NEUTRAL, 1.0F, 1.0F);
                 info.setReturnValue(ItemActionResult.success(world.isClient()));
             }
         }

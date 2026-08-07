@@ -17,17 +17,17 @@ import net.minecraft.registry.entry.RegistryEntry;
 public class PotionContentsComponentMixin {
 
     @Shadow
-    public Optional<RegistryEntry<Potion>> comp_2378() {
+    public Optional<RegistryEntry<Potion>> potion() {
         return null;
     };
 
     @SuppressWarnings("deprecation")
     @Inject(method = "getColor()I", at = @At("HEAD"), cancellable = true)
     private void getColorMixin(CallbackInfoReturnable<Integer> info) {
-        if (this.comp_2378() == null || !this.comp_2378().isPresent() || this.comp_2378().get() == null) {
+        if (this.potion() == null || !this.potion().isPresent() || this.potion().get() == null) {
             return;
         }
-        if (this.comp_2378().get().matches(ItemInit.PURIFIED_WATER)) {
+        if (this.potion().get().matches(ItemInit.PURIFIED_WATER)) {
             info.setReturnValue(3708358);
         }
     }

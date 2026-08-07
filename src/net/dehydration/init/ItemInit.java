@@ -51,7 +51,7 @@ public class ItemInit {
     // Handbook
     public static final Item HANDBOOK = register("handbook", new HandbookItem(new Item.Settings()));
     // Bucket
-    public static final Item PURIFIED_BUCKET = register("purified_water_bucket", new BucketItem(FluidInit.PURIFIED_WATER, new Item.Settings().recipeRemainder(Items.field_8550).maxCount(1)));
+    public static final Item PURIFIED_BUCKET = register("purified_water_bucket", new BucketItem(FluidInit.PURIFIED_WATER, new Item.Settings().recipeRemainder(Items.BUCKET).maxCount(1)));
     // Bowl
     public static final Item WATER_BOWL = register("water_bowl", new WaterBowlItem(new Item.Settings().maxCount(1), true));
     public static final Item PURIFIED_WATER_BOWL = register("purified_water_bowl", new WaterBowlItem(new Item.Settings().maxCount(1), false));

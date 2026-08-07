@@ -60,29 +60,29 @@ public class EventInit {
 
         LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
             if (key.equals(LootTables.SPAWN_BONUS_CHEST)) {
-                LootPool pool = LootPool.builder().with(ItemEntry.builder(Items.field_8469).build()).rolls(BinomialLootNumberProvider.create(5, 0.9F)).build();
+                LootPool pool = LootPool.builder().with(ItemEntry.builder(Items.GLASS_BOTTLE).build()).rolls(BinomialLootNumberProvider.create(5, 0.9F)).build();
                 tableBuilder.pool(pool);
             }
         });
 
         UseItemCallback.EVENT.register((player, world, hand) -> {
-            if (!player.isCreative() && !player.isSpectator() && player.isSneaking() && player.getStackInHand(hand).isOf(Items.field_8428)) {
+            if (!player.isCreative() && !player.isSpectator() && player.isSneaking() && player.getStackInHand(hand).isOf(Items.BOWL)) {
                 HitResult hitResult = player.raycast(player.getBlockInteractionRange(), 0.0F, true);
                 BlockPos blockPos = ((BlockHitResult) hitResult).getBlockPos();
-                if (world.canEntityModifyAt(player, blockPos) && world.getFluidState(blockPos).isIn(FluidTags.field_15517)) {
+                if (world.canEntityModifyAt(player, blockPos) && world.getFluidState(blockPos).isIn(FluidTags.WATER)) {
                     if (world.getFluidState(blockPos).isStill()) {
-                        world.playSound(null, blockPos, SoundEvents.field_15126, SoundCategory.field_15245, 1.0f, 1.0f);
+                        world.playSound(null, blockPos, SoundEvents.ITEM_BUCKET_FILL, SoundCategory.BLOCKS, 1.0f, 1.0f);
                         if (!world.isClient()) {
                             ItemStack itemStack = new ItemStack(ItemInit.WATER_BOWL);
                             if (world.getFluidState(blockPos).isIn(TagInit.PURIFIED_WATER)) {
                                 itemStack = new ItemStack(ItemInit.PURIFIED_WATER_BOWL);
                             }
                             player.setStackInHand(hand, ItemUsage.exchangeStack(player.getStackInHand(hand), player, itemStack));
-                            player.incrementStat(Stats.field_15372.getOrCreateStat(player.getStackInHand(hand).getItem()));
+                            player.incrementStat(Stats.USED.getOrCreateStat(player.getStackInHand(hand).getItem()));
                             if (world.getBlockState(blockPos).contains(Properties.WATERLOGGED)) {
                                 world.setBlockState(blockPos, world.getBlockState(blockPos).with(Properties.WATERLOGGED, false));
                             } else {
-                                world.setBlockState(blockPos, Blocks.field_10124.getDefaultState());
+                                world.setBlockState(blockPos, Blocks.AIR.getDefaultState());
                             }
                         }
                         return TypedActionResult.success(player.getStackInHand(hand), true);
@@ -98,20 +98,20 @@ public class EventInit {
             if (!player.isCreative() && !player.isSpectator() && player.isSneaking() && player.getMainHandStack().isEmpty()) {
                 HitResult hitResult = player.raycast(player.getBlockInteractionRange(), 0.0F, true);
                 BlockPos blockPos = ((BlockHitResult) hitResult).getBlockPos();
-                if (world.canEntityModifyAt(player, blockPos) && world.getFluidState(blockPos).isIn(FluidTags.field_15517)) {
+                if (world.canEntityModifyAt(player, blockPos) && world.getFluidState(blockPos).isIn(FluidTags.WATER)) {
                     if (world.getFluidState(blockPos).isStill() || ConfigInit.CONFIG.allow_non_flowing_water_sip) {
                         ThirstManager thirstManager = ((ThirstManagerAccess) player).getThirstManager();
                         if (thirstManager.isNotFull()) {
                             int drinkTime = ((PlayerAccess) player).getDrinkTime();
                             if (world.isClient() && drinkTime % 3 == 0)
-                                player.playSound(SoundEvents.field_20613, 0.5f, world.getRandom().nextFloat() * 0.1f + 0.9f);
+                                player.playSound(SoundEvents.ENTITY_GENERIC_DRINK, 0.5f, world.getRandom().nextFloat() * 0.1f + 0.9f);
 
                             if (drinkTime > 20) {
                                 if (!world.isClient()) {
                                     thirstManager.add(ConfigInit.CONFIG.water_souce_quench);
                                     if (!world.getFluidState(blockPos).isIn(TagInit.PURIFIED_WATER)) {
                                         float sipThirstChance = ConfigInit.CONFIG.water_sip_thirst_chance;
-                                        if (world.getBiome(blockPos).isIn(BiomeTags.field_36511)) {
+                                        if (world.getBiome(blockPos).isIn(BiomeTags.IS_RIVER)) {
                                             sipThirstChance = sipThirstChance / 2f;
                                         }
                                         if (world.getRandom().nextFloat() <= sipThirstChance) {
@@ -122,11 +122,11 @@ public class EventInit {
                                         if (world.getBlockState(blockPos).contains(Properties.WATERLOGGED)) {
                                             world.setBlockState(blockPos, world.getBlockState(blockPos).with(Properties.WATERLOGGED, false));
                                         } else {
-                                            world.setBlockState(blockPos, Blocks.field_10124.getDefaultState());
+                                            world.setBlockState(blockPos, Blocks.AIR.getDefaultState());
                                         }
                                     }
                                 } else {
-                                    world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundInit.WATER_SIP_EVENT, SoundCategory.field_15248, 1.0F,
+                                    world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundInit.WATER_SIP_EVENT, SoundCategory.PLAYERS, 1.0F,
                                             0.9F + (world.getRandom().nextFloat() / 5F));
                                 }
                                 ((PlayerAccess) player).setDrinkTime(0);
@@ -142,9 +142,9 @@ public class EventInit {
         });
 
         FabricBrewingRecipeRegistryBuilder.BUILD.register((builder) -> {
-            builder.registerPotionRecipe(Potions.field_8991, Items.field_8665, ItemInit.PURIFIED_WATER);
-            builder.registerPotionRecipe(Potions.field_8991, Items.KELP, ItemInit.PURIFIED_WATER);
-            builder.registerPotionRecipe(ItemInit.PURIFIED_WATER, Items.field_8070, ItemInit.HYDRATION);
+            builder.registerPotionRecipe(Potions.WATER, Items.CHARCOAL, ItemInit.PURIFIED_WATER);
+            builder.registerPotionRecipe(Potions.WATER, Items.KELP, ItemInit.PURIFIED_WATER);
+            builder.registerPotionRecipe(ItemInit.PURIFIED_WATER, Items.GHAST_TEAR, ItemInit.HYDRATION);
         });
     }
 }

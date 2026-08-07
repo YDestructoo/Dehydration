@@ -59,7 +59,7 @@ public class BambooPumpBlock extends BlockWithEntity {
 
     public BambooPumpBlock(Settings settings) {
         super(settings);
-        this.setDefaultState(this.stateManager.getDefaultState().with(ATTACHED, false).with(EXTENDED, false).with(FACING, Direction.field_11043).with(WATERLOGGED, false));
+        this.setDefaultState(this.stateManager.getDefaultState().with(ATTACHED, false).with(EXTENDED, false).with(FACING, Direction.NORTH).with(WATERLOGGED, false));
     }
 
     @Override
@@ -69,7 +69,7 @@ public class BambooPumpBlock extends BlockWithEntity {
 
     @Override
     public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.field_11458;
+        return BlockRenderType.MODEL;
     }
 
     @Override
@@ -87,7 +87,7 @@ public class BambooPumpBlock extends BlockWithEntity {
                         } else {
                             bambooPumpEntity.setStack(0, itemStack2.split(1));
                         }
-                        if (bambooPumpEntity.getStack(0).isOf(Items.field_8550)) {
+                        if (bambooPumpEntity.getStack(0).isOf(Items.BUCKET)) {
                             world.setBlockState(pos, state.with(ATTACHED, true), Block.NOTIFY_LISTENERS);
                         }
                     }
@@ -120,10 +120,10 @@ public class BambooPumpBlock extends BlockWithEntity {
                             if (world.getBlockState(checkPos).isAir()) {
                                 break;
                             }
-                            if (world.getBlockState(checkPos).getFluidState().isIn(FluidTags.field_15517)) {
+                            if (world.getBlockState(checkPos).getFluidState().isIn(FluidTags.WATER)) {
                                 boolean notEnoughWater = false;
                                 for (Direction direction : Direction.values()) {
-                                    if (!world.getBlockState(checkPos.offset(direction)).getFluidState().isIn(FluidTags.field_15517)) {
+                                    if (!world.getBlockState(checkPos.offset(direction)).getFluidState().isIn(FluidTags.WATER)) {
                                         notEnoughWater = true;
                                         break;
                                     }
@@ -137,7 +137,7 @@ public class BambooPumpBlock extends BlockWithEntity {
                         if (!foundWater) {
                             if (world.isClient()) {
                                 if (state.get(EXTENDED)) {
-                                    world.playSound(player, pos, SoundEvents.field_14834, SoundCategory.field_15245, 1.0f, 1.0f);
+                                    world.playSound(player, pos, SoundEvents.ITEM_BUCKET_EMPTY, SoundCategory.BLOCKS, 1.0f, 1.0f);
                                 }
                             } else {
                                 player.sendMessage(Text.translatable("block.dehydration.bamboo_pump.no_water"), true);
@@ -148,7 +148,7 @@ public class BambooPumpBlock extends BlockWithEntity {
                     if (ConfigInit.CONFIG.pump_cooldown != 0 && bambooPumpEntity.getCooldown() > 0) {
                         if (world.isClient()) {
                             if (state.get(EXTENDED)) {
-                                world.playSound(player, pos, SoundEvents.field_14834, SoundCategory.field_15245, 1.0f, 1.0f);
+                                world.playSound(player, pos, SoundEvents.ITEM_BUCKET_EMPTY, SoundCategory.BLOCKS, 1.0f, 1.0f);
                             }
                         } else {
                             player.sendMessage(Text.translatable("block.dehydration.bamboo_pump.cooldown", bambooPumpEntity.getCooldown() / 20), true);
@@ -161,7 +161,7 @@ public class BambooPumpBlock extends BlockWithEntity {
                     }
                     if (world.isClient()) {
                         if (state.get(EXTENDED)) {
-                            world.playSound(player, pos, SoundEvents.field_15126, SoundCategory.field_15245, 1.0f, 1.0f);
+                            world.playSound(player, pos, SoundEvents.ITEM_BUCKET_FILL, SoundCategory.BLOCKS, 1.0f, 1.0f);
                         }
                     } else {
                         world.setBlockState(pos, state.with(EXTENDED, !state.get(EXTENDED)), Block.NOTIFY_LISTENERS);
@@ -206,8 +206,8 @@ public class BambooPumpBlock extends BlockWithEntity {
 
     @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (direction == Direction.field_11033 && !state.canPlaceAt(world, pos)) {
-            return Blocks.field_10124.getDefaultState();
+        if (direction == Direction.DOWN && !state.canPlaceAt(world, pos)) {
+            return Blocks.AIR.getDefaultState();
         } else if (state.get(WATERLOGGED)) {
             world.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
         }

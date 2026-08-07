@@ -31,7 +31,7 @@ public class GlassBottleItemMixin {
             if (world.getBlockState(blockPos).contains(Properties.WATERLOGGED)) {
                 world.setBlockState(blockPos, world.getBlockState(blockPos).with(Properties.WATERLOGGED, false));
             } else {
-                world.setBlockState(blockPos, Blocks.field_10124.getDefaultState());
+                world.setBlockState(blockPos, Blocks.AIR.getDefaultState());
             }
         }
     }

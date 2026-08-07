@@ -50,11 +50,11 @@ public abstract class PurifiedWaterFluid extends FlowableFluid {
     public void randomDisplayTick(World world, BlockPos pos, FluidState state, Random random) {
         if (!state.isStill() && !state.get(FALLING).booleanValue()) {
             if (random.nextInt(64) == 0) {
-                world.playSoundClient((double) pos.getX() + 0.5, (double) pos.getY() + 0.5, (double) pos.getZ() + 0.5, SoundEvents.field_15237, SoundCategory.field_15245,
+                world.playSoundClient((double) pos.getX() + 0.5, (double) pos.getY() + 0.5, (double) pos.getZ() + 0.5, SoundEvents.BLOCK_WATER_AMBIENT, SoundCategory.BLOCKS,
                         random.nextFloat() * 0.25f + 0.75f, random.nextFloat() + 0.5f, false);
             }
         } else if (random.nextInt(10) == 0) {
-            world.addParticleClient(ParticleTypes.field_11210, (double) pos.getX() + random.nextDouble(), (double) pos.getY() + random.nextDouble(), (double) pos.getZ() + random.nextDouble(), 0.0, 0.0,
+            world.addParticleClient(ParticleTypes.UNDERWATER, (double) pos.getX() + random.nextDouble(), (double) pos.getY() + random.nextDouble(), (double) pos.getZ() + random.nextDouble(), 0.0, 0.0,
                     0.0);
         }
     }
@@ -62,7 +62,7 @@ public abstract class PurifiedWaterFluid extends FlowableFluid {
     @Override
     @Nullable
     public ParticleEffect getParticle() {
-        return ParticleTypes.field_11232;
+        return ParticleTypes.DRIPPING_WATER;
     }
 
     @Override
@@ -98,7 +98,7 @@ public abstract class PurifiedWaterFluid extends FlowableFluid {
 
     @Override
     public boolean canBeReplacedWith(FluidState state, BlockView world, BlockPos pos, Fluid fluid, Direction direction) {
-        return fluid.isIn(FluidTags.field_15517);
+        return fluid.isIn(FluidTags.WATER);
     }
 
     @Override
@@ -108,12 +108,12 @@ public abstract class PurifiedWaterFluid extends FlowableFluid {
 
     @Override
     public Optional<SoundEvent> getBucketFillSound() {
-        return Optional.of(SoundEvents.field_15126);
+        return Optional.of(SoundEvents.ITEM_BUCKET_FILL);
     }
 
     @Override
     protected void flow(WorldAccess world, BlockPos pos, BlockState state, Direction direction, FluidState fluidState) {
-        if (!state.getFluidState().isIn(FluidTags.field_15517)) {
+        if (!state.getFluidState().isIn(FluidTags.WATER)) {
             super.flow(world, pos, state, direction, fluidState);
         }
     }

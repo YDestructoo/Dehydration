@@ -32,7 +32,7 @@ public class BowlFluidStorage extends SingleVariantStorage<FluidVariant> {
 
     @Override
     public boolean isResourceBlank() {
-        return stack.isOf(Items.field_8428);
+        return stack.isOf(Items.BOWL);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class BowlFluidStorage extends SingleVariantStorage<FluidVariant> {
 
     @Override
     protected boolean canInsert(FluidVariant variant) {
-        return stack.isOf(Items.field_8428) && (variant.getFluid() == Fluids.WATER || variant.getFluid() == FluidInit.PURIFIED_WATER);
+        return stack.isOf(Items.BOWL) && (variant.getFluid() == Fluids.WATER || variant.getFluid() == FluidInit.PURIFIED_WATER);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class BowlFluidStorage extends SingleVariantStorage<FluidVariant> {
             return 0;
         }
 
-        ItemStack newStack = new ItemStack(Items.field_8428);
+        ItemStack newStack = new ItemStack(Items.BOWL);
         if (context.exchange(ItemVariant.of(newStack), 1, transaction) == 1) {
             return BOWL_CAPACITY;
         }

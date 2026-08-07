@@ -30,7 +30,7 @@ public interface CopperCauldronBehavior {
     Map<Item, CopperCauldronBehavior> PURIFIED_WATER_COPPER_CAULDRON_BEHAVIOR = createMap();
 
     CopperCauldronBehavior FILL_WITH_POWDER_SNOW = (state, world, pos, player, hand, stack) -> fillCauldron(world, pos, player, hand, stack, BlockInit.COPPER_POWDERED_CAULDRON_BLOCK.getDefaultState().with(CopperLeveledCauldronBlock.LEVEL, 3),
-            SoundEvents.field_27847);
+            SoundEvents.ITEM_BUCKET_EMPTY_POWDER_SNOW);
 
     static Object2ObjectOpenHashMap<Item, CopperCauldronBehavior> createMap() {
         return Util.make(new Object2ObjectOpenHashMap<>(), (map) -> {
@@ -43,13 +43,13 @@ public interface CopperCauldronBehavior {
     static void registerBehavior() {
         registerBucketBehavior(EMPTY_COPPER_CAULDRON_BEHAVIOR);
         registerBucketBehavior(WATER_COPPER_CAULDRON_BEHAVIOR);
-        POWDER_SNOW_COPPER_CAULDRON_BEHAVIOR.put(Items.field_8550, (state, world, pos, player, hand, stack) -> emptyCauldron(state, world, pos, player, hand, stack, new ItemStack(Items.field_27876), (statex) -> statex.get(CopperLeveledCauldronBlock.LEVEL) == 3, SoundEvents.field_27846));
+        POWDER_SNOW_COPPER_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> emptyCauldron(state, world, pos, player, hand, stack, new ItemStack(Items.POWDER_SNOW_BUCKET), (statex) -> statex.get(CopperLeveledCauldronBlock.LEVEL) == 3, SoundEvents.ITEM_BUCKET_FILL_POWDER_SNOW));
         registerBucketBehavior(POWDER_SNOW_COPPER_CAULDRON_BEHAVIOR);
         registerBucketBehavior(PURIFIED_WATER_COPPER_CAULDRON_BEHAVIOR);
     }
 
     static void registerBucketBehavior(Map<Item, CopperCauldronBehavior> behavior) {
-        behavior.put(Items.field_27876, FILL_WITH_POWDER_SNOW);
+        behavior.put(Items.POWDER_SNOW_BUCKET, FILL_WITH_POWDER_SNOW);
     }
 
     static ItemActionResult emptyCauldron(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, ItemStack stack, ItemStack output, Predicate<BlockState> predicate, SoundEvent soundEvent) {
@@ -59,11 +59,11 @@ public interface CopperCauldronBehavior {
             if (!world.isClient()) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, ItemUsage.exchangeStack(stack, player, output));
-                player.incrementStat(Stats.field_15373);
-                player.incrementStat(Stats.field_15372.getOrCreateStat(item));
+                player.incrementStat(Stats.USE_CAULDRON);
+                player.incrementStat(Stats.USED.getOrCreateStat(item));
                 world.setBlockState(pos, BlockInit.COPPER_CAULDRON_BLOCK.getDefaultState());
-                world.playSound(null, pos, soundEvent, SoundCategory.field_15245, 1.0F, 1.0F);
-                world.emitGameEvent(null, GameEvent.field_28167, pos);
+                world.playSound(null, pos, soundEvent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                world.emitGameEvent(null, GameEvent.FLUID_PICKUP, pos);
             }
 
             return ItemActionResult.success(world.isClient());
@@ -73,12 +73,12 @@ public interface CopperCauldronBehavior {
     static ItemActionResult fillCauldron(World world, BlockPos pos, PlayerEntity player, Hand hand, ItemStack stack, BlockState state, SoundEvent soundEvent) {
         if (!world.isClient()) {
             Item item = stack.getItem();
-            player.setStackInHand(hand, ItemUsage.exchangeStack(stack, player, new ItemStack(Items.field_8550)));
-            player.incrementStat(Stats.field_15430);
-            player.incrementStat(Stats.field_15372.getOrCreateStat(item));
+            player.setStackInHand(hand, ItemUsage.exchangeStack(stack, player, new ItemStack(Items.BUCKET)));
+            player.incrementStat(Stats.FILL_CAULDRON);
+            player.incrementStat(Stats.USED.getOrCreateStat(item));
             world.setBlockState(pos, state);
-            world.playSound(null, pos, soundEvent, SoundCategory.field_15245, 1.0F, 1.0F);
-            world.emitGameEvent(null, GameEvent.field_28166, pos);
+            world.playSound(null, pos, soundEvent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+            world.emitGameEvent(null, GameEvent.FLUID_PLACE, pos);
         }
 
         return ItemActionResult.success(world.isClient());

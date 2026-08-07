@@ -50,7 +50,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ThirstMa
 
     @Inject(method = "tickMovement()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerInventory;updateItems()V", shift = Shift.BEFORE))
     private void tickMovementMixin(CallbackInfo info) {
-        if (this.getWorld().getDifficulty() == Difficulty.field_5801 && this.getWorld().getGameRules().getBoolean(GameRules.field_19395) && this.thirstManager.hasThirst()) {
+        if (this.getWorld().getDifficulty() == Difficulty.PEACEFUL && this.getWorld().getGameRules().getBoolean(GameRules.NATURAL_REGENERATION) && this.thirstManager.hasThirst()) {
             PlayerEntity player = (PlayerEntity) (Object) this;
             this.thirstManager.update(player);
             if (this.thirstManager.isNotFull() && this.age % 10 == 0) {

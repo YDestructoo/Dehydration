@@ -16,14 +16,14 @@ import java.util.Map;
 public class FluidBehavior {
 
     public static void registerWaterBucketForCauldron(Item emptyBucket, Item filledBucket) {
-        Map<Item, CauldronBehavior> waterMap = CauldronBehavior.WATER_CAULDRON_BEHAVIOR.comp_1982();
+        Map<Item, CauldronBehavior> waterMap = CauldronBehavior.WATER_CAULDRON_BEHAVIOR.map();
 
         waterMap.put(emptyBucket, (state, world, pos, player, hand, stack) ->
                 CauldronBehaviorAccess.fillFromCauldron(
                         state, world, pos, player, hand, stack,
                         new ItemStack(filledBucket),
                         s -> s.get(LeveledCauldronBlock.LEVEL) == 3,
-                        SoundEvents.field_15126
+                        SoundEvents.ITEM_BUCKET_FILL
                 )
         );
     }
@@ -36,7 +36,7 @@ public class FluidBehavior {
                                 state, world, pos, player, hand, stack,
                                 new ItemStack(filledBucket),
                                 s -> s.get(CopperLeveledCauldronBlock.LEVEL) == 3,
-                                SoundEvents.field_15126
+                                SoundEvents.ITEM_BUCKET_FILL
                         )
         );
     }
@@ -49,7 +49,7 @@ public class FluidBehavior {
                                 state, world, pos, player, hand, stack,
                                 new ItemStack(filledBucket),
                                 s -> s.get(RainwaterLeveledCollectorBlock.LEVEL) == 3,
-                                SoundEvents.field_15126
+                                SoundEvents.ITEM_BUCKET_FILL
                         )
         );
     }
@@ -63,7 +63,7 @@ public class FluidBehavior {
                                 state, world, pos, player, hand, stack,
                                 new ItemStack(filledBucket),
                                 s -> s.get(CopperLeveledCauldronBlock.LEVEL) == 3,
-                                SoundEvents.field_15126
+                                SoundEvents.ITEM_BUCKET_FILL
                         )
         );
 
@@ -75,7 +75,7 @@ public class FluidBehavior {
                                 state, world, pos, player, hand, stack,
                                 new ItemStack(filledBucket),
                                 s -> s.get(RainwaterLeveledCollectorBlock.LEVEL) == 3,
-                                SoundEvents.field_15126
+                                SoundEvents.ITEM_BUCKET_FILL
                         )
         );
 

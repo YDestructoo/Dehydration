@@ -35,12 +35,12 @@ public abstract class PotionItemMixin extends Item {
 
     @Inject(method = "use", at = @At("HEAD"), cancellable = true)
     private void useMixin(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> info) {
-        BlockHitResult hitResult = Item.raycast(world, user, RaycastContext.FluidHandling.field_1345);
-        if (((HitResult) hitResult).getType() == HitResult.Type.field_1332) {
+        BlockHitResult hitResult = Item.raycast(world, user, RaycastContext.FluidHandling.SOURCE_ONLY);
+        if (((HitResult) hitResult).getType() == HitResult.Type.BLOCK) {
             BlockPos blockPos = hitResult.getBlockPos();
-            if (world.canEntityModifyAt(user, blockPos) && world.getFluidState(blockPos).isIn(FluidTags.field_15517)) {
-                world.playSound(user, user.getX(), user.getY(), user.getZ(), SoundEvents.field_14826, SoundCategory.field_15254, 1.0f, 1.0f);
-                info.setReturnValue(TypedActionResult.success(new ItemStack(Items.field_8469), world.isClient()));
+            if (world.canEntityModifyAt(user, blockPos) && world.getFluidState(blockPos).isIn(FluidTags.WATER)) {
+                world.playSound(user, user.getX(), user.getY(), user.getZ(), SoundEvents.ITEM_BOTTLE_EMPTY, SoundCategory.NEUTRAL, 1.0f, 1.0f);
+                info.setReturnValue(TypedActionResult.success(new ItemStack(Items.GLASS_BOTTLE), world.isClient()));
             }
         }
     }
@@ -60,7 +60,7 @@ public abstract class PotionItemMixin extends Item {
             if (thirstQuench == 0) {
                 thirstQuench = ConfigInit.CONFIG.potion_thirst_quench;
             }
-            if (stack.getOrDefault(DataComponentTypes.field_49651, PotionContentsComponent.DEFAULT).comp_2378().isPresent() && ThirstHelper.isBadPotion(stack.getOrDefault(DataComponentTypes.field_49651, PotionContentsComponent.DEFAULT).comp_2378().get())) {
+            if (stack.getOrDefault(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent.DEFAULT).potion().isPresent() && ThirstHelper.isBadPotion(stack.getOrDefault(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent.DEFAULT).potion().get())) {
                 return Optional.of(new ThirstTooltipData(2, thirstQuench));
             }
             return Optional.of(new ThirstTooltipData(0, thirstQuench));

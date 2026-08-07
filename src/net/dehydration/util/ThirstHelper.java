@@ -44,8 +44,8 @@ public class ThirstHelper {
             }
         }
         if (stack.getItem() instanceof PotionItem) {
-            PotionContentsComponent potionContentsComponent = stack.getOrDefault(DataComponentTypes.field_49651, PotionContentsComponent.DEFAULT);
-            if (ThirstHelper.isBadPotion(potionContentsComponent.comp_2378().orElse(Potions.field_8991)) && serverPlayerEntity.getRandom().nextFloat() >= ConfigInit.CONFIG.potion_bad_thirst_chance) {
+            PotionContentsComponent potionContentsComponent = stack.getOrDefault(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent.DEFAULT);
+            if (ThirstHelper.isBadPotion(potionContentsComponent.potion().orElse(Potions.WATER)) && serverPlayerEntity.getRandom().nextFloat() >= ConfigInit.CONFIG.potion_bad_thirst_chance) {
                 serverPlayerEntity.addStatusEffect(new StatusEffectInstance(EffectInit.THIRST, ConfigInit.CONFIG.potion_bad_thirst_duration, 0, false, false, true));
             }
             if (thirstQuench == 0) {
@@ -69,9 +69,9 @@ public class ThirstHelper {
     }
 
     public static boolean isBadPotion(RegistryEntry<Potion> potion) {
-        return potion == Potions.field_8991 || potion == Potions.field_8999 || potion == Potions.field_8985 || potion == Potions.field_9004 || potion == Potions.field_9002 || potion == Potions.field_8989
-                || potion == Potions.field_8970 || potion == Potions.field_8967 || potion == Potions.field_8982 || potion == Potions.field_8996 || potion == Potions.field_8973
-                || potion == Potions.field_8972 || potion == Potions.field_8976 || potion == Potions.field_8975;
+        return potion == Potions.WATER || potion == Potions.AWKWARD || potion == Potions.THICK || potion == Potions.HARMING || potion == Potions.LONG_POISON || potion == Potions.LONG_SLOWNESS
+                || potion == Potions.LONG_WEAKNESS || potion == Potions.MUNDANE || potion == Potions.POISON || potion == Potions.SLOWNESS || potion == Potions.STRONG_HARMING
+                || potion == Potions.STRONG_POISON || potion == Potions.STRONG_SLOWNESS || potion == Potions.WEAKNESS;
     }
 
 }

@@ -94,7 +94,7 @@ public class RainwaterLeveledCollectorBlock extends AbstractRainwaterCollectorBl
 
     static {
         LEVEL = Properties.LEVEL_3;
-        RAIN_PREDICATE = (precipitation) -> precipitation == Biome.Precipitation.field_9382;
-        SNOW_PREDICATE = (precipitation) -> precipitation == Biome.Precipitation.field_9383;
+        RAIN_PREDICATE = (precipitation) -> precipitation == Biome.Precipitation.RAIN;
+        SNOW_PREDICATE = (precipitation) -> precipitation == Biome.Precipitation.SNOW;
     }
 }

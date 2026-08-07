@@ -23,7 +23,7 @@ public class DrinkItem extends Item {
 
     @Override
     public UseAction getUseAction(ItemStack stack) {
-        return UseAction.field_8946;
+        return UseAction.DRINK;
     }
 
     @Override
@@ -37,12 +37,12 @@ public class DrinkItem extends Item {
 
         if (playerEntity != null) {
             // Increment the use statistic
-            playerEntity.incrementStat(Stats.field_15372.getOrCreateStat(this));
+            playerEntity.incrementStat(Stats.USED.getOrCreateStat(this));
 
             // Drinks are not available in creative mode
             if (!playerEntity.getAbilities().creativeMode) {
                 // The drink also has to have a FoodComponent
-                FoodComponent foodComponent = stack.get(DataComponentTypes.field_50075);
+                FoodComponent foodComponent = stack.get(DataComponentTypes.FOOD);
                 if (foodComponent != null) {
                     DrinkEvent.EVENT.invoker().onDrink(stack, playerEntity);
                     user.eatFood(world, stack, foodComponent);
@@ -53,12 +53,12 @@ public class DrinkItem extends Item {
         // Create a glass bottle after the item is consumed
         if (playerEntity == null || !playerEntity.getAbilities().creativeMode) {
             if (stack.isEmpty()) {
-                return new ItemStack(Items.field_8469);
+                return new ItemStack(Items.GLASS_BOTTLE);
             }
 
             if (playerEntity != null) {
                 // offerOrDrop is generally safer to use than insertStack
-                playerEntity.getInventory().offerOrDrop(new ItemStack(Items.field_8469));
+                playerEntity.getInventory().offerOrDrop(new ItemStack(Items.GLASS_BOTTLE));
             }
         }
 

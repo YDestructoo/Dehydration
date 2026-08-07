@@ -24,7 +24,7 @@ public class DispenserBehaviorAccess {
             public ItemStack dispenseSilently(BlockPointer pointer, ItemStack stack) {
                 this.setSuccess(false);
                 ServerWorld serverWorld = pointer.world();
-                BlockPos blockPos = pointer.comp_1968().offset(pointer.comp_1969().get(DispenserBlock.FACING));
+                BlockPos blockPos = pointer.pos().offset(pointer.state().get(DispenserBlock.FACING));
                 BlockState blockState = serverWorld.getBlockState(blockPos);
                 if (blockState.isOf(BlockInit.CAMPFIRE_CAULDRON_BLOCK) && blockState.get(CampfireCauldronBlock.LEVEL) > 0) {
                     CampfireCauldronBlock campfireCauldronBlock = (CampfireCauldronBlock) blockState.getBlock();
@@ -67,7 +67,7 @@ public class DispenserBehaviorAccess {
         if (stack.isEmpty()) {
             return newStack.copy();
         } else {
-            if (!pointer.comp_1970().addToFirstFreeSlot(newStack.copy()).isEmpty()) {
+            if (!pointer.blockEntity().addToFirstFreeSlot(newStack.copy()).isEmpty()) {
                 new ItemDispenserBehavior().dispense(pointer, newStack.copy());
             }
 

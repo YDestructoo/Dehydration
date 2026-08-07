@@ -18,11 +18,11 @@ public class DehydrationEmiPlugin implements EmiPlugin {
 
     @Override
     public void register(EmiRegistry registry) {
-        ItemStack purifiedWaterBottle = ItemVariant.of(Items.field_8574).toStack();
-        purifiedWaterBottle.set(DataComponentTypes.field_49651, new PotionContentsComponent(ItemInit.PURIFIED_WATER));
+        ItemStack purifiedWaterBottle = ItemVariant.of(Items.POTION).toStack();
+        purifiedWaterBottle.set(DataComponentTypes.POTION_CONTENTS, new PotionContentsComponent(ItemInit.PURIFIED_WATER));
 
-        registry.addRecipe(EmiWorldInteractionRecipe.builder().id(DehydrationMain.identifierOf("/emi/recipe/water_bowl")).leftInput(EmiStack.of(Items.field_8428)).rightInput(EmiStack.of(Fluids.WATER), false).output(EmiStack.of(ItemInit.WATER_BOWL)).build());
-        registry.addRecipe(EmiWorldInteractionRecipe.builder().id(DehydrationMain.identifierOf("/emi/recipe/purified_water_bowl")).leftInput(EmiStack.of(Items.field_8428)).rightInput(EmiStack.of(FluidInit.PURIFIED_WATER), false).output(EmiStack.of(ItemInit.PURIFIED_WATER_BOWL)).build());
-        registry.addRecipe(EmiWorldInteractionRecipe.builder().id(DehydrationMain.identifierOf("/emi/recipe/purified_water_bottle")).leftInput(EmiStack.of(Items.field_8469)).rightInput(EmiStack.of(FluidInit.PURIFIED_WATER), false).output(EmiStack.of(purifiedWaterBottle)).build());
+        registry.addRecipe(EmiWorldInteractionRecipe.builder().id(DehydrationMain.identifierOf("/emi/recipe/water_bowl")).leftInput(EmiStack.of(Items.BOWL)).rightInput(EmiStack.of(Fluids.WATER), false).output(EmiStack.of(ItemInit.WATER_BOWL)).build());
+        registry.addRecipe(EmiWorldInteractionRecipe.builder().id(DehydrationMain.identifierOf("/emi/recipe/purified_water_bowl")).leftInput(EmiStack.of(Items.BOWL)).rightInput(EmiStack.of(FluidInit.PURIFIED_WATER), false).output(EmiStack.of(ItemInit.PURIFIED_WATER_BOWL)).build());
+        registry.addRecipe(EmiWorldInteractionRecipe.builder().id(DehydrationMain.identifierOf("/emi/recipe/purified_water_bottle")).leftInput(EmiStack.of(Items.GLASS_BOTTLE)).rightInput(EmiStack.of(FluidInit.PURIFIED_WATER), false).output(EmiStack.of(purifiedWaterBottle)).build());
     }
 }

@@ -34,9 +34,9 @@ public class PurifiedWaterPotionStorage implements ExtractionOnlyStorage<FluidVa
 
     private static boolean isPurifiedWaterPotion(ContainerItemContext context) {
         ItemVariant variant = context.getItemVariant();
-        Optional<? extends PotionContentsComponent> potionContents = variant.getComponents().get(DataComponentTypes.field_49651);
-        RegistryEntry<Potion> potion = potionContents.map(PotionContentsComponent::comp_2378).orElse(null).orElse(null);
-        return variant.isOf(Items.field_8574) && potion == ItemInit.PURIFIED_WATER;
+        Optional<? extends PotionContentsComponent> potionContents = variant.getComponents().get(DataComponentTypes.POTION_CONTENTS);
+        RegistryEntry<Potion> potion = potionContents.map(PotionContentsComponent::potion).orElse(null).orElse(null);
+        return variant.isOf(Items.POTION) && potion == ItemInit.PURIFIED_WATER;
     }
 
     private final ContainerItemContext context;
@@ -51,8 +51,8 @@ public class PurifiedWaterPotionStorage implements ExtractionOnlyStorage<FluidVa
 
     private ItemVariant mapToGlassBottle() {
         ItemStack newStack = context.getItemVariant().toStack();
-        newStack.set(DataComponentTypes.field_49651, PotionContentsComponent.DEFAULT);
-        return ItemVariant.of(Items.field_8469, newStack.getComponentChanges());
+        newStack.set(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent.DEFAULT);
+        return ItemVariant.of(Items.GLASS_BOTTLE, newStack.getComponentChanges());
     }
 
     @Override

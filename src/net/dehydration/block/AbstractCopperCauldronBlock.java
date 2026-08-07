@@ -89,7 +89,7 @@ public abstract class AbstractCopperCauldronBlock extends Block {
         BlockPos blockPos = PointedDripstoneBlock.getDripPos(world, pos);
         if (blockPos != null) {
             Fluid fluid = PointedDripstoneBlock.getDripFluid(world, (BlockPos) blockPos);
-            if (fluid != Fluids.field_15906 && this.canBeFilledByDripstone(fluid)) {
+            if (fluid != Fluids.EMPTY && this.canBeFilledByDripstone(fluid)) {
                 this.fillFromDripstone(state, world, pos, fluid);
             }
         }

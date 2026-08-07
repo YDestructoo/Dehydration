@@ -197,7 +197,7 @@ public class CopperCauldronFluidStorage extends SnapshotParticipant<BlockState> 
                 levelProperty = LeveledCauldronBlock.LEVEL;
             } else {
                 this.block = BlockInit.COPPER_CAULDRON_BLOCK;
-                fluid = Fluids.field_15906;
+                fluid = Fluids.EMPTY;
                 amountPerLevel = FluidConstants.BUCKET;
                 maxLevel = 1;
                 levelProperty = null;
@@ -218,7 +218,7 @@ public class CopperCauldronFluidStorage extends SnapshotParticipant<BlockState> 
                 maxLevel = 3;
                 levelProperty = LeveledCauldronBlock.LEVEL;
             } else {
-                this.fluid = Fluids.field_15906;
+                this.fluid = Fluids.EMPTY;
                 block = BlockInit.COPPER_CAULDRON_BLOCK;
                 amountPerLevel = FluidConstants.BUCKET;
                 maxLevel = 1;
@@ -227,7 +227,7 @@ public class CopperCauldronFluidStorage extends SnapshotParticipant<BlockState> 
         }
 
         private int currentLevel(BlockState state) {
-            if (fluid == Fluids.field_15906) {
+            if (fluid == Fluids.EMPTY) {
                 return 0;
             } else if (levelProperty == null) {
                 return 1;
