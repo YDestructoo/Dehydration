@@ -51,7 +51,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ThirstMa
 
     @Inject(method = "tickMovement()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerInventory;updateItems()V", shift = Shift.BEFORE))
     private void tickMovementMixin(CallbackInfo info) {
-        if (this.getEntityWorld() instanceof ServerWorld serverWorld && serverWorld.getDifficulty() == Difficulty.PEACEFUL && serverWorld.getGameRules().getBoolean(GameRules.NATURAL_HEALTH_REGENERATION) && this.thirstManager.hasThirst()) {
+        if (this.getEntityWorld() instanceof ServerWorld serverWorld && serverWorld.getDifficulty() == Difficulty.PEACEFUL && serverWorld.getGameRules().getValue(GameRules.NATURAL_HEALTH_REGENERATION) && this.thirstManager.hasThirst()) {
             PlayerEntity player = (PlayerEntity) (Object) this;
             this.thirstManager.update(player);
             if (this.thirstManager.isNotFull() && this.age % 10 == 0) {
@@ -101,5 +101,4 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ThirstMa
     public int getDrinkTime() {
         return this.drinkTime;
     }
-
 }
