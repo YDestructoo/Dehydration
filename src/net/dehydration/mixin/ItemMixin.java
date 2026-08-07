@@ -29,7 +29,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Optional;
 
 @Mixin(Item.class)
-public class ItemMixin {
+public abstract class ItemMixin extends Item {
+
+    protected ItemMixin(Item.Settings settings) {
+        super(settings);
+    }
 
     @Inject(method = "use", at = @At("HEAD"), cancellable = true)
     private void dehydration$useRegularPotion(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<ActionResult> info) {
@@ -38,7 +42,7 @@ public class ItemMixin {
             return;
         }
 
-        BlockHitResult hitResult = Item.raycast(world, user, RaycastContext.FluidHandling.SOURCE_ONLY);
+        BlockHitResult hitResult = raycast(world, user, RaycastContext.FluidHandling.SOURCE_ONLY);
         if (hitResult.getType() != HitResult.Type.BLOCK) {
             return;
         }
