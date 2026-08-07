@@ -17,8 +17,7 @@
     "PlayerScreenHandlerMixin",
     "PointedDripstoneBlockMixin",
     "PotionContentsComponentMixin",
-    "PotionItemMixin",
-    "compat.PuddleBlockMixin"
+    "PotionItemMixin"
   ],
   "client": [
     "client.InGameHudMixin",
