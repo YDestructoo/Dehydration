@@ -10,6 +10,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.Difficulty;
 
@@ -39,7 +40,9 @@ public class ThirstManager {
             ++this.dehydrationTimer;
             if (this.dehydrationTimer >= 90) {
                 if (player.getHealth() > 10.0F || difficulty == Difficulty.HARD || (player.getHealth() > 1.0F && difficulty == Difficulty.NORMAL)) {
-                    player.clientDamage(createDamageSource(player), ConfigInit.CONFIG.thirst_damage);
+                    if (player.getEntityWorld() instanceof ServerWorld serverWorld) {
+                        player.damage(serverWorld, createDamageSource(player), ConfigInit.CONFIG.thirst_damage);
+                    }
                 }
                 this.dehydrationTimer = 0;
             }
@@ -58,11 +61,11 @@ public class ThirstManager {
     }
 
     public void readNbt(NbtCompound tag) {
-        if (tag.contains("ThirstLevel", 99)) {
-            this.thirstLevel = tag.getInt("ThirstLevel");
-            this.dehydrationTimer = tag.getInt("ThirstTickTimer");
-            this.dehydration = tag.getFloat("ThirstExhaustionLevel");
-            this.hasThirst = tag.getBoolean("HasThirst");
+        if (tag.contains("ThirstLevel")) {
+            this.thirstLevel = tag.getInt("ThirstLevel", 20);
+            this.dehydrationTimer = tag.getInt("ThirstTickTimer", 0);
+            this.dehydration = tag.getFloat("ThirstExhaustionLevel", 0.0F);
+            this.hasThirst = tag.getBoolean("HasThirst", true);
         }
     }
 

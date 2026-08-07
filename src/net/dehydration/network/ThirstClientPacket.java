@@ -25,7 +25,7 @@ public class ThirstClientPacket {
             int playerId = payload.playerId();
             int thirstLevel = payload.thirstLevel();
             context.client().execute(() -> {
-                if (context.player().getWorld().getEntityById(playerId) instanceof PlayerEntity playerEntity) {
+                if (context.player().getEntityWorld().getEntityById(playerId) instanceof PlayerEntity playerEntity) {
                     ThirstManager thirstManager = ((ThirstManagerAccess) playerEntity).getThirstManager();
                     thirstManager.setThirstLevel(thirstLevel);
                 }
@@ -35,7 +35,7 @@ public class ThirstClientPacket {
             int playerId = payload.playerId();
             boolean excludedThirst = payload.excludingThirst();
             context.client().execute(() -> {
-                if (context.player().getWorld().getEntityById(playerId) instanceof PlayerEntity playerEntity) {
+                if (context.player().getEntityWorld().getEntityById(playerId) instanceof PlayerEntity playerEntity) {
                     ((ThirstManagerAccess) playerEntity).getThirstManager().setThirst(excludedThirst);
                 }
             });
@@ -48,7 +48,7 @@ public class ThirstClientPacket {
             for (int i = 0; i < templateList.size(); i += 2) {
                 List<Item> items = new ArrayList<Item>();
                 for (int u = 0; u < templateList.get(i + 1); u++) {
-                    items.add(Registries.ITEM.getEntry(payload.templateIdentifiers().get(count)));
+                    items.add(Registries.ITEM.get(payload.templateIdentifiers().get(count)));
                     count++;
                 }
                 hydrationTemplates.add(new HydrationTemplate(templateList.get(i), items));

@@ -63,7 +63,7 @@ public class CampfireCauldronBlock extends Block implements BlockEntityProvider 
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, BlockInit.CAMPFIRE_CAULDRON_ENTITY, world.isClient ? CampfireCauldronEntity::clientTick : CampfireCauldronEntity::serverTick);
+        return checkType(type, BlockInit.CAMPFIRE_CAULDRON_ENTITY, world.isClient() ? CampfireCauldronEntity::clientTick : CampfireCauldronEntity::serverTick);
     }
 
     @Override

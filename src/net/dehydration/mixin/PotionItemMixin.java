@@ -40,7 +40,7 @@ public abstract class PotionItemMixin extends Item {
             BlockPos blockPos = hitResult.getBlockPos();
             if (world.canEntityModifyAt(user, blockPos) && world.getFluidState(blockPos).isIn(FluidTags.WATER)) {
                 world.playSound(user, user.getX(), user.getY(), user.getZ(), SoundEvents.ITEM_BOTTLE_EMPTY, SoundCategory.NEUTRAL, 1.0f, 1.0f);
-                info.setReturnValue(TypedActionResult.success(new ItemStack(Items.GLASS_BOTTLE), world.isClient()));
+                info.setReturnValue((world.isClient() ? ActionResult.SUCCESS : ActionResult.SUCCESS_SERVER).withNewHandStack(new ItemStack(Items.GLASS_BOTTLE)));
             }
         }
     }

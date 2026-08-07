@@ -4,6 +4,7 @@ import net.dehydration.access.ThirstManagerAccess;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.entity.player.PlayerEntity;
 
 public class HydrationEffect extends StatusEffect {
@@ -13,11 +14,11 @@ public class HydrationEffect extends StatusEffect {
     }
 
     @Override
-    public boolean applyUpdateEffect(LivingEntity entity, int amplifier) {
-        if (!entity.getWorld().isClient() && entity instanceof PlayerEntity player) {
+    public boolean applyUpdateEffect(ServerWorld world, LivingEntity entity, int amplifier) {
+        if (!world.isClient() && entity instanceof PlayerEntity player) {
             ((ThirstManagerAccess) player).getThirstManager().add(amplifier + 1);
         }
-        return super.applyUpdateEffect(entity, amplifier);
+        return super.applyUpdateEffect(world, entity, amplifier);
     }
 
     @Override

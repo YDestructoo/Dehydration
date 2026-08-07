@@ -64,7 +64,7 @@ public class DataLoader implements SimpleSynchronousResourceReloadListener {
                                     DehydrationMain.LOGGER.warn("{} is not a valid item identifier", jsonObject.getAsJsonArray("items").get(u).getAsString());
                                     continue;
                                 }
-                                items.add(Registries.ITEM.getEntry(Identifier.of(jsonObject.getAsJsonArray("items").get(u).getAsString())));
+                                items.add(Registries.ITEM.get(Identifier.of(jsonObject.getAsJsonArray("items").get(u).getAsString())));
                             }
                             DehydrationMain.HYDRATION_TEMPLATES.add(new HydrationTemplate(i, items));
 

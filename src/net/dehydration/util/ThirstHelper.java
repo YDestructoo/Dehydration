@@ -51,7 +51,7 @@ public class ThirstHelper {
             if (thirstQuench == 0) {
                 thirstQuench = ConfigInit.CONFIG.potion_thirst_quench;
             }
-        } else if (stack.getItem() instanceof MilkBucketItem) {
+        } else if (stack.isOf(Items.MILK_BUCKET)) {
             if (serverPlayerEntity.getRandom().nextFloat() >= ConfigInit.CONFIG.milk_thirst_chance) {
                 serverPlayerEntity.addStatusEffect(new StatusEffectInstance(EffectInit.THIRST, ConfigInit.CONFIG.potion_bad_thirst_duration / 2, 0, false, false, true));
             }
@@ -59,7 +59,7 @@ public class ThirstHelper {
                 thirstQuench = ConfigInit.CONFIG.milk_thirst_quench;
             }
         } else if (thirstQuench == 0) {
-            if (stack.getItem() instanceof HoneyBottleItem) {
+            if (stack.isOf(Items.HONEY_BOTTLE)) {
                 thirstQuench = ConfigInit.CONFIG.honey_quench;
             }
         }

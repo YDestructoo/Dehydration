@@ -33,7 +33,7 @@ public class PuddleBlockMixin {
                     LeatherFlask.fillFlask(stack, 2);
                 }
                 world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundInit.FILL_FLASK_EVENT, SoundCategory.NEUTRAL, 1.0F, 1.0F);
-                info.setReturnValue(ActionResult.success(world.isClient()));
+                info.setReturnValue(world.isClient() ? ActionResult.SUCCESS : ActionResult.SUCCESS_SERVER);
             }
         }
     }

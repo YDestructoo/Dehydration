@@ -6,6 +6,7 @@ import net.dehydration.thirst.ThirstManager;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.entity.player.PlayerEntity;
 
 public class ThirstEffect extends StatusEffect {
@@ -15,12 +16,12 @@ public class ThirstEffect extends StatusEffect {
     }
 
     @Override
-    public boolean applyUpdateEffect(LivingEntity entity, int amplifier) {
+    public boolean applyUpdateEffect(ServerWorld world, LivingEntity entity, int amplifier) {
         if (entity instanceof PlayerEntity playerEntity) {
             ThirstManager thirstManager = ((ThirstManagerAccess) playerEntity).getThirstManager();
             thirstManager.addDehydration(ConfigInit.CONFIG.thirst_effect_factor * (float) (amplifier + 1));
         }
-        return super.applyUpdateEffect(entity, amplifier);
+        return super.applyUpdateEffect(world, entity, amplifier);
     }
 
     @Override
