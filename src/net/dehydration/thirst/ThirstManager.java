@@ -7,10 +7,11 @@ import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.Difficulty;
 
@@ -60,20 +61,18 @@ public class ThirstManager {
 
     }
 
-    public void readNbt(NbtCompound tag) {
-        if (tag.contains("ThirstLevel")) {
-            this.thirstLevel = tag.getInt("ThirstLevel", 20);
-            this.dehydrationTimer = tag.getInt("ThirstTickTimer", 0);
-            this.dehydration = tag.getFloat("ThirstExhaustionLevel", 0.0F);
-            this.hasThirst = tag.getBoolean("HasThirst", true);
-        }
+    public void readData(ReadView view) {
+        this.thirstLevel = view.getInt("ThirstLevel", 20);
+        this.dehydrationTimer = view.getInt("ThirstTickTimer", 0);
+        this.dehydration = view.getFloat("ThirstExhaustionLevel", 0.0F);
+        this.hasThirst = view.getBoolean("HasThirst", true);
     }
 
-    public void writeNbt(NbtCompound tag) {
-        tag.putInt("ThirstLevel", this.thirstLevel);
-        tag.putInt("ThirstTickTimer", this.dehydrationTimer);
-        tag.putFloat("ThirstExhaustionLevel", this.dehydration);
-        tag.putBoolean("HasThirst", this.hasThirst);
+    public void writeData(WriteView view) {
+        view.putInt("ThirstLevel", this.thirstLevel);
+        view.putInt("ThirstTickTimer", this.dehydrationTimer);
+        view.putFloat("ThirstExhaustionLevel", this.dehydration);
+        view.putBoolean("HasThirst", this.hasThirst);
     }
 
     public int getThirstLevel() {
