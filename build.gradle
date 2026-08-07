@@ -48,10 +48,6 @@ dependencies {
 	modCompileOnly modRuntimeOnly("com.terraformersmc:modmenu:${project.mod_menu_version}"),{
 		exclude(group: "net.fabricmc.fabric-api")
 	}
-	// Puddles
-	modCompileOnly ('maven.modrinth:puddles:2.0.0'){
-		exclude(group: "net.fabricmc.fabric-api")
-	}
 	// Croptopia
 	modCompileOnly 'curse.maven:croptopia-fabric-415438:4512803',{
 		exclude(group: "net.fabricmc.fabric-api")
