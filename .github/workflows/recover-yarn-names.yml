@@ -1,0 +1,39 @@
+name: recover-yarn-names
+
+on:
+  push:
+    branches:
+      - fix/1.21.11-ci
+    paths:
+      - '.github/workflows/recover-yarn-names.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  recover:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout fix branch
+        uses: actions/checkout@v4
+        with:
+          ref: fix/1.21.11-ci
+          fetch-depth: 0
+
+      - name: Recover named Yarn identifiers
+        run: python3 scripts/recover_yarn_names.py
+
+      - name: Commit repaired sources
+        shell: bash
+        run: |
+          set -euxo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/net
+          if git diff --cached --quiet; then
+            echo 'No source names needed recovery.'
+            exit 0
+          fi
+          git commit -m 'port: recover Yarn names after mapping migration'
+          git push origin HEAD:fix/1.21.11-ci
