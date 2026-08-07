@@ -1,0 +1,117 @@
+package net.dehydration.mixin;
+
+import net.dehydration.block.RainwaterLeveledCollectorBlock;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import org.spongepowered.asm.mixin.injection.At;
+
+import net.dehydration.block.CampfireCauldronBlock;
+import net.dehydration.block.CopperLeveledCauldronBlock;
+import net.dehydration.block.entity.CampfireCauldronEntity;
+import net.dehydration.init.BlockInit;
+import net.dehydration.init.ItemInit;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.BlockWithEntity;
+import net.minecraft.block.DispenserBlock;
+import net.minecraft.block.entity.DispenserBlockEntity;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.item.PotionItem;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPointer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.WorldEvents;
+
+@Mixin(DispenserBlock.class)
+public abstract class DispenserBlockMixin extends BlockWithEntity {
+
+    public DispenserBlockMixin(Settings settings) {
+        super(settings);
+    }
+
+    @Inject(method = "dispense", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/block/entity/DispenserBlockEntity;getStack(I)Lnet/minecraft/item/ItemStack;"), locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true)
+    protected void dispenseMixin(ServerWorld world, BlockState state, BlockPos pos, CallbackInfo info, DispenserBlockEntity dispenserBlockEntity, BlockPointer blockPointer, int i,
+                                 ItemStack itemStack) {
+        BlockPos newPos = pos.offset(state.get(DispenserBlock.FACING));
+        BlockState blockState = world.getBlockState(newPos);
+        if (!itemStack.isEmpty()) {
+            if (itemStack.getItem().equals(Items.field_8705)) {
+                if (blockState.isOf(BlockInit.CAMPFIRE_CAULDRON_BLOCK) && blockState.get(CampfireCauldronBlock.LEVEL) < 4) {
+                    itemStack.decrement(1);
+                    dispenserBlockEntity.setStack(i, new ItemStack(Items.field_8550));
+                    ((CampfireCauldronEntity) world.getBlockEntity(newPos)).onFillingCauldron();
+                    ((CampfireCauldronBlock) blockState.getBlock()).setLevel(world, newPos, blockState, 4);
+                    world.syncWorldEvent(WorldEvents.DISPENSER_DISPENSES, pos, 0);
+                    info.cancel();
+                } else if (blockState.isOf(BlockInit.COPPER_CAULDRON_BLOCK)
+                        || (blockState.isOf(BlockInit.COPPER_WATER_CAULDRON_BLOCK) && !((CopperLeveledCauldronBlock) blockState.getBlock()).isFull(blockState))) {
+                    itemStack.decrement(1);
+                    dispenserBlockEntity.setStack(i, new ItemStack(Items.field_8550));
+                    world.setBlockState(newPos, BlockInit.COPPER_WATER_CAULDRON_BLOCK.getDefaultState().with(CopperLeveledCauldronBlock.LEVEL, 3), 3);
+                    world.syncWorldEvent(WorldEvents.DISPENSER_DISPENSES, pos, 0);
+                    info.cancel();
+                } else if (blockState.isOf(BlockInit.RAINWATER_COLLECTOR_BLOCK)
+                        || (blockState.isOf(BlockInit.RAINWATER_WATER_COLLECTOR_BLOCK) && !((RainwaterLeveledCollectorBlock) blockState.getBlock()).isFull(blockState))) {
+                    itemStack.decrement(1);
+                    dispenserBlockEntity.setStack(i, new ItemStack(Items.field_8550));
+                    world.setBlockState(newPos, BlockInit.RAINWATER_WATER_COLLECTOR_BLOCK.getDefaultState().with(RainwaterLeveledCollectorBlock.LEVEL, 3), 3);
+                    world.syncWorldEvent(WorldEvents.DISPENSER_DISPENSES, pos, 0);
+                    info.cancel();
+                }
+            } else if (itemStack.getItem().equals(ItemInit.PURIFIED_BUCKET)) {
+                if (blockState.isOf(BlockInit.CAMPFIRE_CAULDRON_BLOCK) && blockState.get(CampfireCauldronBlock.LEVEL) < 4) {
+                    itemStack.decrement(1);
+                    dispenserBlockEntity.setStack(i, new ItemStack(Items.field_8550));
+                    ((CampfireCauldronEntity) world.getBlockEntity(newPos)).onFillingCauldron();
+                    ((CampfireCauldronBlock) blockState.getBlock()).setLevel(world, newPos, blockState, 4);
+                    world.syncWorldEvent(WorldEvents.DISPENSER_DISPENSES, pos, 0);
+                    info.cancel();
+                } else if (blockState.isOf(BlockInit.COPPER_CAULDRON_BLOCK)
+                        || (blockState.isOf(BlockInit.COPPER_PURIFIED_WATER_CAULDRON_BLOCK) && !((CopperLeveledCauldronBlock) blockState.getBlock()).isFull(blockState))) {
+                    itemStack.decrement(1);
+                    dispenserBlockEntity.setStack(i, new ItemStack(Items.field_8550));
+                    world.setBlockState(newPos, BlockInit.COPPER_PURIFIED_WATER_CAULDRON_BLOCK.getDefaultState().with(CopperLeveledCauldronBlock.LEVEL, 3), 3);
+                    world.syncWorldEvent(WorldEvents.DISPENSER_DISPENSES, pos, 0);
+                    info.cancel();
+                } else if (blockState.isOf(BlockInit.RAINWATER_COLLECTOR_BLOCK)
+                        || (blockState.isOf(BlockInit.RAINWATER_PURIFIED_WATER_COLLECTOR_BLOCK) && !((RainwaterLeveledCollectorBlock) blockState.getBlock()).isFull(blockState))) {
+                    itemStack.decrement(1);
+                    dispenserBlockEntity.setStack(i, new ItemStack(Items.field_8550));
+                    world.setBlockState(newPos, BlockInit.RAINWATER_PURIFIED_WATER_COLLECTOR_BLOCK.getDefaultState().with(RainwaterLeveledCollectorBlock.LEVEL, 3), 3);
+                    world.syncWorldEvent(WorldEvents.DISPENSER_DISPENSES, pos, 0);
+                    info.cancel();
+                }
+            } else if (itemStack.getItem() instanceof PotionItem && itemStack.get(DataComponentTypes.field_49651) != null && itemStack.get(DataComponentTypes.field_49651).comp_2378().isPresent() && itemStack.get(DataComponentTypes.field_49651).comp_2378().get() == ItemInit.PURIFIED_WATER) {
+                if (blockState.isOf(BlockInit.COPPER_CAULDRON_BLOCK)) {
+                    itemStack.decrement(1);
+                    dispenserBlockEntity.setStack(i, new ItemStack(Items.field_8469));
+                    world.setBlockState(newPos, BlockInit.COPPER_PURIFIED_WATER_CAULDRON_BLOCK.getDefaultState(), 3);
+                    world.syncWorldEvent(WorldEvents.DISPENSER_DISPENSES, pos, 0);
+                    info.cancel();
+                } else if (blockState.isOf(BlockInit.COPPER_PURIFIED_WATER_CAULDRON_BLOCK) && !((CopperLeveledCauldronBlock) blockState.getBlock()).isFull(blockState)) {
+                    itemStack.decrement(1);
+                    dispenserBlockEntity.setStack(i, new ItemStack(Items.field_8469));
+                    world.setBlockState(newPos, (BlockState) blockState.cycle(CopperLeveledCauldronBlock.LEVEL));
+                    world.syncWorldEvent(WorldEvents.DISPENSER_DISPENSES, pos, 0);
+                    info.cancel();
+                }else  if (blockState.isOf(BlockInit.RAINWATER_COLLECTOR_BLOCK)) {
+                    itemStack.decrement(1);
+                    dispenserBlockEntity.setStack(i, new ItemStack(Items.field_8469));
+                    world.setBlockState(newPos, BlockInit.RAINWATER_PURIFIED_WATER_COLLECTOR_BLOCK.getDefaultState(), 3);
+                    world.syncWorldEvent(WorldEvents.DISPENSER_DISPENSES, pos, 0);
+                    info.cancel();
+                } else if (blockState.isOf(BlockInit.RAINWATER_PURIFIED_WATER_COLLECTOR_BLOCK) && !((RainwaterLeveledCollectorBlock) blockState.getBlock()).isFull(blockState)) {
+                    itemStack.decrement(1);
+                    dispenserBlockEntity.setStack(i, new ItemStack(Items.field_8469));
+                    world.setBlockState(newPos, (BlockState) blockState.cycle(RainwaterLeveledCollectorBlock.LEVEL));
+                    world.syncWorldEvent(WorldEvents.DISPENSER_DISPENSES, pos, 0);
+                    info.cancel();
+                }
+            }
+        }
+    }
+
+}
