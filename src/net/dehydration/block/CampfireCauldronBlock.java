@@ -119,7 +119,7 @@ public class CampfireCauldronBlock extends Block implements BlockEntityProvider 
     }
 
     @Override
-    public int getComparatorOutput(BlockState state, World world, BlockPos pos) {
+    protected int getComparatorOutput(BlockState state, World world, BlockPos pos, Direction direction) {
         return state.get(LEVEL);
     }
 

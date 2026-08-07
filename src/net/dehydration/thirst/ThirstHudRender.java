@@ -1,7 +1,6 @@
 package net.dehydration.thirst;
 
 import org.jetbrains.annotations.Nullable;
-import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.dehydration.access.ThirstManagerAccess;
 import net.dehydration.init.ConfigInit;
@@ -13,6 +12,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -79,43 +79,35 @@ public class ThirstHudRender {
                         variable_two = variable_two + ConfigInit.CONFIG.hud_x;
                         variable_three = variable_three + ConfigInit.CONFIG.hud_y;
 
-                        context.drawTexture(RenderInit.THIRST_ICON, variable_two, variable_three, 0, 0, 9, 9, 256, 256); // Background
+                        context.drawTexture(RenderPipelines.GUI_TEXTURED, RenderInit.THIRST_ICON, variable_two, variable_three, 0, 0, 9, 9, 256, 256); // Background
                         if (variable_one * 2 + 1 < thirst) {
-                            context.drawTexture(RenderInit.THIRST_ICON, variable_two, variable_three, beneathCoord, uppderCoord, 9, 9, 256, 256); // Big icon
+                            context.drawTexture(RenderPipelines.GUI_TEXTURED, RenderInit.THIRST_ICON, variable_two, variable_three, beneathCoord, uppderCoord, 9, 9, 256, 256); // Big icon
                         }
                         if (variable_one * 2 + 1 == thirst) {
-                            context.drawTexture(RenderInit.THIRST_ICON, variable_two, variable_three, beneathCoord + 9, uppderCoord, 9, 9, 256, 256); // Small icon
+                            context.drawTexture(RenderPipelines.GUI_TEXTURED, RenderInit.THIRST_ICON, variable_two, variable_three, beneathCoord + 9, uppderCoord, 9, 9, 256, 256); // Small icon
                         }
                         // Show item thirst quench
                         if (variable_one >= thirst / 2) {
                             if (itemStack != null) {
-                                RenderSystem.enableBlend();
-                                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, flashAlpha);
                                 int thirstQuench = ((ThirstTooltipData) itemStack.getTooltipData().get()).getThirstQuench();
                                 if (itemStack.getItem() instanceof LeatherFlask)
                                     thirstQuench = ConfigInit.CONFIG.flask_thirst_quench;
                                 int quality = ((ThirstTooltipData) itemStack.getTooltipData().get()).getDrinkQuality();
                                 if (variable_one < (thirst + thirstQuench) / 2) {
-                                    context.drawTexture(RenderInit.THIRST_ICON, variable_two, variable_three, quality * 18, 9, 9, 9, 256, 256);
+                                    context.drawTexture(RenderPipelines.GUI_TEXTURED, RenderInit.THIRST_ICON, variable_two, variable_three, quality * 18, 9, 9, 9, 256, 256);
                                 } else if ((thirst + thirstQuench) % 2 != 0 && variable_one < (thirst + thirstQuench) / 2 + 1) {
-                                    context.drawTexture(RenderInit.THIRST_ICON, variable_two, variable_three, quality * 18 + 9, 9, 9, 9, 256, 256);
+                                    context.drawTexture(RenderPipelines.GUI_TEXTURED, RenderInit.THIRST_ICON, variable_two, variable_three, quality * 18 + 9, 9, 9, 9, 256, 256);
                                 }
-                                RenderSystem.disableBlend();
-                                RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
                             }
                         }
                         // Freezing
                         if (playerEntity.getFrozenTicks() > 0) {
-                            RenderSystem.enableBlend();
-                            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, playerEntity.getFreezingScale());
                             if (variable_one * 2 + 1 < thirst) {
-                                context.drawTexture(RenderInit.THIRST_ICON, variable_two, variable_three, 54, uppderCoord, 9, 9, 256, 256);
+                                context.drawTexture(RenderPipelines.GUI_TEXTURED, RenderInit.THIRST_ICON, variable_two, variable_three, 54, uppderCoord, 9, 9, 256, 256);
                             }
                             if (variable_one * 2 + 1 == thirst) {
-                                context.drawTexture(RenderInit.THIRST_ICON, variable_two, variable_three, 54 + 9, uppderCoord, 9, 9, 256, 256);
+                                context.drawTexture(RenderPipelines.GUI_TEXTURED, RenderInit.THIRST_ICON, variable_two, variable_three, 54 + 9, uppderCoord, 9, 9, 256, 256);
                             }
-                            RenderSystem.disableBlend();
-                            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
                         }
                     }
                 }

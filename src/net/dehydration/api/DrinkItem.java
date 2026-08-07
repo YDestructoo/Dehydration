@@ -45,7 +45,8 @@ public class DrinkItem extends Item {
                 FoodComponent foodComponent = stack.get(DataComponentTypes.FOOD);
                 if (foodComponent != null) {
                     DrinkEvent.EVENT.invoker().onDrink(stack, playerEntity);
-                    user.eatFood(world, stack, foodComponent);
+                    playerEntity.getHungerManager().eat(foodComponent);
+                    stack.decrementUnlessCreative(1, playerEntity);
                 }
             }
         }

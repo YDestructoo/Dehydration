@@ -12,6 +12,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.rule.GameRules;
+import net.minecraft.server.world.ServerWorld;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -50,7 +51,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ThirstMa
 
     @Inject(method = "tickMovement()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerInventory;updateItems()V", shift = Shift.BEFORE))
     private void tickMovementMixin(CallbackInfo info) {
-        if (this.getEntityWorld().getDifficulty() == Difficulty.PEACEFUL && this.getEntityWorld().getGameRules().getBoolean(GameRules.NATURAL_HEALTH_REGENERATION) && this.thirstManager.hasThirst()) {
+        if (this.getEntityWorld() instanceof ServerWorld serverWorld && serverWorld.getDifficulty() == Difficulty.PEACEFUL && serverWorld.getGameRules().getBoolean(GameRules.NATURAL_HEALTH_REGENERATION) && this.thirstManager.hasThirst()) {
             PlayerEntity player = (PlayerEntity) (Object) this;
             this.thirstManager.update(player);
             if (this.thirstManager.isNotFull() && this.age % 10 == 0) {
@@ -72,7 +73,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ThirstMa
     @Inject(method = "addExhaustion(F)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/HungerManager;addExhaustion(F)V", shift = Shift.AFTER))
     private void addExhaustionMixin(float exhaustion, CallbackInfo info) {
         if (this.thirstManager.hasThirst()) {
-            if (ConfigInit.CONFIG.harder_nether && this.getEntityWorld().getDimension().ultrawarm()) {
+            if (ConfigInit.CONFIG.harder_nether && this.getEntityWorld().getRegistryKey().equals(World.NETHER)) {
                 exhaustion *= ConfigInit.CONFIG.nether_factor;
             }
             this.thirstManager.addDehydration(exhaustion / ConfigInit.CONFIG.hydrating_factor);

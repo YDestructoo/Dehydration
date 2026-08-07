@@ -6,6 +6,7 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityCollisionHandler;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.Item;
@@ -13,8 +14,10 @@ import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldEvents;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.biome.Biome;
 
 import java.util.Map;
@@ -48,10 +51,10 @@ public class CopperLeveledCauldronBlock extends AbstractCopperCauldronBlock {
     }
 
     @Override
-    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
+    protected void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity, EntityCollisionHandler handler, boolean bool) {
         if (!world.isClient() && entity.isOnFire() && this.isEntityTouchingFluid(state, pos, entity)) {
             entity.extinguish();
-            if (entity.canModifyAt(world, pos)) {
+            if (world instanceof ServerWorld serverWorld && entity.canModifyAt(serverWorld, pos)) {
                 decrementFluidLevel(state, world, pos);
             }
         }
@@ -66,7 +69,7 @@ public class CopperLeveledCauldronBlock extends AbstractCopperCauldronBlock {
     }
 
     @Override
-    public int getComparatorOutput(BlockState state, World world, BlockPos pos) {
+    protected int getComparatorOutput(BlockState state, World world, BlockPos pos, Direction direction) {
         return state.get(LEVEL);
     }
 

@@ -103,7 +103,7 @@ public abstract class AbstractRainwaterCollectorBlock extends Block {
     }
 
     @Override
-    public ItemStack getPickStack(WorldView world, BlockPos pos, BlockState state) {
+    protected ItemStack getPickStack(WorldView world, BlockPos pos, BlockState state, boolean includeData) {
         return new ItemStack(BlockInit.RAINWATER_COLLECTOR_BLOCK);
     }
 
