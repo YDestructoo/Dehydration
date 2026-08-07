@@ -1,23 +1,24 @@
 package net.dehydration.mixin;
 
 import com.mojang.authlib.GameProfile;
-
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.At.Shift;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import org.spongepowered.asm.mixin.injection.At;
-
 import net.dehydration.access.ServerPlayerAccess;
 import net.dehydration.access.ThirstManagerAccess;
 import net.dehydration.network.ThirstServerPacket;
 import net.dehydration.thirst.ThirstManager;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.At.Shift;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.Set;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin extends PlayerEntity implements ServerPlayerAccess {
@@ -44,19 +45,9 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Se
         }
     }
 
-    // @Inject(method = "Lnet/minecraft/server/network/ServerPlayerEntity;copyFrom(Lnet/minecraft/server/network/ServerPlayerEntity;Z)V", at = @At(value = "INVOKE", target =
-    // "Lnet/minecraft/server/network/ServerPlayerEntity;setHealth(F)V"))
-    // public void copyFromMixinOne(ServerPlayerEntity oldPlayer, boolean alive, CallbackInfo info) {
-    // this.thirstManager.setThirstLevel(((ThirstManagerAccess) oldPlayer).getThirstManager().getThirstLevel());
-    // }
-
-    // @Inject(method = "Lnet/minecraft/server/network/ServerPlayerEntity;copyFrom(Lnet/minecraft/server/network/ServerPlayerEntity;Z)V", at = @At(value = "TAIL"))
-    // public void copyFromMixinTwo(ServerPlayerEntity oldPlayer, boolean alive, CallbackInfo info) {
-    // this.syncedThirstLevel = -1;
-    // }
-
-    @Inject(method = "Lnet/minecraft/server/network/ServerPlayerEntity;teleport(Lnet/minecraft/server/world/ServerWorld;DDDFF)V", at = @At("TAIL"))
-    private void teleportMixin(ServerWorld targetWorld, double x, double y, double z, float yaw, float pitch, CallbackInfo info) {
+    @Inject(method = "teleport(Lnet/minecraft/server/world/ServerWorld;DDDLjava/util/Set;FFZ)Z", at = @At("TAIL"))
+    private void teleportMixin(ServerWorld targetWorld, double x, double y, double z, Set<PositionFlag> flags,
+            float yaw, float pitch, boolean resetCamera, CallbackInfoReturnable<Boolean> info) {
         this.syncedThirstLevel = -1;
     }
 
@@ -69,5 +60,4 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Se
     public void setSyncedThirstLevel(int syncedThirstLevel) {
         this.syncedThirstLevel = syncedThirstLevel;
     }
-
 }
