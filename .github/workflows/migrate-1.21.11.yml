@@ -36,25 +36,25 @@ jobs:
       - name: Save 1.21.11 build properties
         run: cp gradle.properties /tmp/gradle.properties.1.21.11
 
-      - name: Switch project mappings back to source version
+      - name: Restore 1.21.1 source mapping configuration
         run: git show origin/1.21:gradle.properties > gradle.properties
 
-      - name: Migrate Yarn mappings from 1.21.1 to 1.21.11
-        run: ./gradlew migrateMappings --mappings 'net.fabricmc:yarn:1.21.11+build.6' --stacktrace
-
-      - name: Apply migrated sources
-        shell: bash
+      - name: Remove incorrectly placed previous migration output
         run: |
-          set -euxo pipefail
-          if [ -d remappedSrc/main/java ]; then
-            cp -a remappedSrc/main/java/. src/main/java/
-          elif [ -d remappedSrc ]; then
-            find remappedSrc -maxdepth 3 -type f | head -100
-            cp -a remappedSrc/. src/
-          else
-            echo 'Loom did not create remappedSrc; checking for in-place changes.'
-          fi
-          cp /tmp/gradle.properties.1.21.11 gradle.properties
+          rm -rf src/net
+          rm -f src/OriginCommandMixin.java src/PlayerOriginComponentMixin.java
+
+      - name: Migrate Yarn mappings in place to 1.21.11
+        run: |
+          ./gradlew migrateMappings \
+            --mappings '1.21.11+build.3' \
+            --input 'src/main/java' \
+            --output 'src/main/java' \
+            --overrideInputsIHaveABackup \
+            --stacktrace
+
+      - name: Restore 1.21.11 build properties
+        run: cp /tmp/gradle.properties.1.21.11 gradle.properties
 
       - name: Commit migrated sources
         shell: bash
@@ -62,10 +62,10 @@ jobs:
           set -euxo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add src gradle.properties
+          git add -A src gradle.properties
           if git diff --cached --quiet; then
             echo 'No migration changes produced.'
             exit 0
           fi
-          git commit -m 'port: migrate Yarn mappings to 1.21.11'
+          git commit -m 'port: migrate Yarn mappings in place for 1.21.11'
           git push origin HEAD:port/1.21.11
