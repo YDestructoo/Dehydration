@@ -8,11 +8,12 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.rule.GameRules;
-import net.minecraft.server.world.ServerWorld;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -60,14 +61,14 @@ public abstract class PlayerEntityMixin extends LivingEntity implements ThirstMa
         }
     }
 
-    @Inject(method = "readCustomData", at = @At(value = "TAIL"))
-    private void readCustomDataFromTagMixin(NbtCompound tag, CallbackInfo info) {
-        this.thirstManager.readNbt(tag);
+    @Inject(method = "readCustomData", at = @At("TAIL"))
+    private void readCustomDataMixin(ReadView view, CallbackInfo info) {
+        this.thirstManager.readData(view);
     }
 
-    @Inject(method = "writeCustomData", at = @At(value = "TAIL"))
-    private void writeCustomDataToTagMixin(NbtCompound tag, CallbackInfo info) {
-        this.thirstManager.writeNbt(tag);
+    @Inject(method = "writeCustomData", at = @At("TAIL"))
+    private void writeCustomDataMixin(WriteView view, CallbackInfo info) {
+        this.thirstManager.writeData(view);
     }
 
     @Inject(method = "addExhaustion(F)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/HungerManager;addExhaustion(F)V", shift = Shift.AFTER))
