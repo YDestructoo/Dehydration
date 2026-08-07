@@ -31,7 +31,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.DirectionProperty;
+import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
@@ -50,7 +50,7 @@ import java.util.List;
 @SuppressWarnings("deprecation")
 public class BambooPumpBlock extends BlockWithEntity {
 
-    public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
+    public static final EnumProperty<Direction> FACING = HorizontalFacingBlock.FACING;
     public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
     public static final BooleanProperty EXTENDED = Properties.EXTENDED;
     public static final BooleanProperty ATTACHED = Properties.ATTACHED;
@@ -73,7 +73,7 @@ public class BambooPumpBlock extends BlockWithEntity {
     }
 
     @Override
-    public ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    public ActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         BambooPumpEntity bambooPumpEntity = (BambooPumpEntity) world.getBlockEntity(pos);
         if (bambooPumpEntity != null) {
             ItemStack itemStack = bambooPumpEntity.getStack(0);
@@ -91,7 +91,7 @@ public class BambooPumpBlock extends BlockWithEntity {
                             world.setBlockState(pos, state.with(ATTACHED, true), Block.NOTIFY_LISTENERS);
                         }
                     }
-                    return ItemActionResult.success(world.isClient());
+                    return world.isClient() ? ActionResult.SUCCESS : ActionResult.SUCCESS_SERVER;
                 }
                 // can get used to place a water source block infront of the pump
                 // else {
@@ -101,7 +101,7 @@ public class BambooPumpBlock extends BlockWithEntity {
                 // } else
                 // world.setBlockState(pos, state.with(EXTENDED, !state.get(EXTENDED)), Block.NOTIFY_LISTENERS);
                 // }
-                // return ActionResult.success(world.isClient());
+                // return world.isClient() ? ActionResult.SUCCESS : ActionResult.SUCCESS_SERVER;
             } else {
                 if (itemStack2.isEmpty() && player.isSneaking()) {
                     if (!world.isClient()) {
@@ -109,7 +109,7 @@ public class BambooPumpBlock extends BlockWithEntity {
                         bambooPumpEntity.clear();
                         world.setBlockState(pos, state.with(ATTACHED, false).with(EXTENDED, false), Block.NOTIFY_LISTENERS);
                     }
-                    return ItemActionResult.success(world.isClient());
+                    return world.isClient() ? ActionResult.SUCCESS : ActionResult.SUCCESS_SERVER;
                 }
                 Storage<FluidVariant> storage = ContainerItemContext.withConstant(itemStack).find(FluidStorage.ITEM);
                 if ((storage != null && storage.supportsInsertion()) || (itemStack.getItem() instanceof LeatherFlask && !LeatherFlask.isFlaskFull(itemStack))) {
@@ -142,7 +142,7 @@ public class BambooPumpBlock extends BlockWithEntity {
                             } else {
                                 player.sendMessage(Text.translatable("block.dehydration.bamboo_pump.no_water"), true);
                             }
-                            return ItemActionResult.FAIL;
+                            return ActionResult.FAIL;
                         }
                     }
                     if (ConfigInit.CONFIG.pump_cooldown != 0 && bambooPumpEntity.getCooldown() > 0) {
@@ -153,7 +153,7 @@ public class BambooPumpBlock extends BlockWithEntity {
                         } else {
                             player.sendMessage(Text.translatable("block.dehydration.bamboo_pump.cooldown", bambooPumpEntity.getCooldown() / 20), true);
                         }
-                        return ItemActionResult.FAIL;
+                        return ActionResult.FAIL;
                     }
 
                     if (state.get(EXTENDED)) {
@@ -166,13 +166,13 @@ public class BambooPumpBlock extends BlockWithEntity {
                     } else {
                         world.setBlockState(pos, state.with(EXTENDED, !state.get(EXTENDED)), Block.NOTIFY_LISTENERS);
                     }
-                    return ItemActionResult.success(world.isClient());
+                    return world.isClient() ? ActionResult.SUCCESS : ActionResult.SUCCESS_SERVER;
                 }
             }
 
         }
 
-        return ItemActionResult.FAIL;
+        return ActionResult.FAIL;
 
     }
 

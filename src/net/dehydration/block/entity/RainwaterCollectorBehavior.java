@@ -14,7 +14,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ItemActionResult;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -33,10 +33,10 @@ public interface RainwaterCollectorBehavior {
             SoundEvents.ITEM_BUCKET_EMPTY_POWDER_SNOW);
 
     static Object2ObjectOpenHashMap<Item, RainwaterCollectorBehavior> createMap() {
-        return Util.make(new Object2ObjectOpenHashMap<>(), (map) -> map.defaultReturnValue((state, world, pos, player, hand, stack) -> ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION));
+        return Util.make(new Object2ObjectOpenHashMap<>(), (map) -> map.defaultReturnValue((state, world, pos, player, hand, stack) -> ActionResult.PASS_TO_DEFAULT_BLOCK_ACTION));
     }
 
-    ItemActionResult interact(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, ItemStack stack);
+    ActionResult interact(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, ItemStack stack);
 
     static void registerBehavior() {
         registerBucketBehavior(EMPTY_RAINWATER_COLLECTOR_BEHAVIOR);
@@ -50,9 +50,9 @@ public interface RainwaterCollectorBehavior {
         behavior.put(Items.POWDER_SNOW_BUCKET, FILL_WITH_POWDER_SNOW);
     }
 
-    static ItemActionResult emptyCollector(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, ItemStack stack, ItemStack output, Predicate<BlockState> predicate, SoundEvent soundEvent) {
+    static ActionResult emptyCollector(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, ItemStack stack, ItemStack output, Predicate<BlockState> predicate, SoundEvent soundEvent) {
         if (!predicate.test(state)) {
-            return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return ActionResult.PASS_TO_DEFAULT_BLOCK_ACTION;
         } else {
             if (!world.isClient()) {
                 Item item = stack.getItem();
@@ -64,11 +64,11 @@ public interface RainwaterCollectorBehavior {
                 world.emitGameEvent(null, GameEvent.FLUID_PICKUP, pos);
             }
 
-            return ItemActionResult.success(world.isClient());
+            return world.isClient() ? ActionResult.SUCCESS : ActionResult.SUCCESS_SERVER;
         }
     }
 
-    static ItemActionResult fillCollector(World world, BlockPos pos, PlayerEntity player, Hand hand, ItemStack stack, BlockState state, SoundEvent soundEvent) {
+    static ActionResult fillCollector(World world, BlockPos pos, PlayerEntity player, Hand hand, ItemStack stack, BlockState state, SoundEvent soundEvent) {
         if (!world.isClient()) {
             Item item = stack.getItem();
             player.setStackInHand(hand, ItemUsage.exchangeStack(stack, player, new ItemStack(Items.BUCKET)));
@@ -79,6 +79,6 @@ public interface RainwaterCollectorBehavior {
             world.emitGameEvent(null, GameEvent.FLUID_PLACE, pos);
         }
 
-        return ItemActionResult.success(world.isClient());
+        return world.isClient() ? ActionResult.SUCCESS : ActionResult.SUCCESS_SERVER;
     }
 }

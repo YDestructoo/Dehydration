@@ -6,6 +6,7 @@ import net.dehydration.init.TagInit;
 import net.dehydration.misc.ThirstTooltipData;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.item.tooltip.TooltipData;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,7 +22,13 @@ public class ItemMixin {
     private void getTooltipDataMixin(ItemStack stack, CallbackInfoReturnable<Optional<TooltipData>> info) {
         if (ConfigInit.CONFIG.thirst_preview) {
             int thirstQuench = 0;
-            if (stack.isIn(TagInit.HYDRATING_STEW)) {
+            int quality = 0;
+            if (stack.isOf(Items.HONEY_BOTTLE)) {
+                thirstQuench = ConfigInit.CONFIG.honey_quench;
+            } else if (stack.isOf(Items.MILK_BUCKET)) {
+                thirstQuench = ConfigInit.CONFIG.milk_thirst_quench;
+                quality = 1;
+            } else if (stack.isIn(TagInit.HYDRATING_STEW)) {
                 thirstQuench = ConfigInit.CONFIG.stew_thirst_quench;
             } else if (stack.isIn(TagInit.HYDRATING_FOOD)) {
                 thirstQuench = ConfigInit.CONFIG.food_thirst_quench;
@@ -42,7 +49,7 @@ public class ItemMixin {
             }
 
             if (thirstQuench > 0) {
-                info.setReturnValue(Optional.of(new ThirstTooltipData(0, thirstQuench)));
+                info.setReturnValue(Optional.of(new ThirstTooltipData(quality, thirstQuench)));
             }
         }
     }

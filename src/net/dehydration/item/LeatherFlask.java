@@ -13,6 +13,7 @@ import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.*;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -37,6 +38,7 @@ import net.minecraft.world.event.GameEvent;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 // Thanks to Pois1x for the texture
 public class LeatherFlask extends Item {
@@ -62,16 +64,16 @@ public class LeatherFlask extends Item {
             // Empty flask
             if (player.isSneaking()) {
                 if (flaskComponent.fillLevel() > 0) {
-                    if (!player.getWorld().isClient()) {
+                    if (!player.getEntityWorld().isClient()) {
                         if (state.getBlock() instanceof AbstractCauldronBlock) {
                             if (state.getBlock() instanceof LeveledCauldronBlock) {
                                 if (((LeveledCauldronBlock) state.getBlock()).isFull(state)) {
                                     return super.useOnBlock(context);
                                 }
-                                player.getWorld().setBlockState(pos, state.cycle(LeveledCauldronBlock.LEVEL));
+                                player.getEntityWorld().setBlockState(pos, state.cycle(LeveledCauldronBlock.LEVEL));
                             } else {
-                                player.getWorld().setBlockState(pos, Blocks.WATER_CAULDRON.getDefaultState());
-                                player.getWorld().emitGameEvent(null, GameEvent.BLOCK_CHANGE, pos);
+                                player.getEntityWorld().setBlockState(pos, Blocks.WATER_CAULDRON.getDefaultState());
+                                player.getEntityWorld().emitGameEvent(null, GameEvent.BLOCK_CHANGE, pos);
                             }
                         } else if (state.getBlock() instanceof AbstractCopperCauldronBlock) {
                             if (state.getBlock() instanceof CopperLeveledCauldronBlock) {
@@ -79,50 +81,50 @@ public class LeatherFlask extends Item {
                                     return super.useOnBlock(context);
                                 }
                                 if (flaskComponent.qualityLevel() != 0) {
-                                    player.getWorld().setBlockState(pos,
+                                    player.getEntityWorld().setBlockState(pos,
                                             BlockInit.COPPER_WATER_CAULDRON_BLOCK.getDefaultState().with(CopperLeveledCauldronBlock.LEVEL, state.get(CopperLeveledCauldronBlock.LEVEL) + 1));
                                 } else {
-                                    player.getWorld().setBlockState(pos, state.cycle(CopperLeveledCauldronBlock.LEVEL));
+                                    player.getEntityWorld().setBlockState(pos, state.cycle(CopperLeveledCauldronBlock.LEVEL));
                                 }
                             } else {
                                 if (flaskComponent.qualityLevel() == 0) {
-                                    player.getWorld().setBlockState(pos, BlockInit.COPPER_PURIFIED_WATER_CAULDRON_BLOCK.getDefaultState());
+                                    player.getEntityWorld().setBlockState(pos, BlockInit.COPPER_PURIFIED_WATER_CAULDRON_BLOCK.getDefaultState());
                                 } else {
-                                    player.getWorld().setBlockState(pos, BlockInit.COPPER_WATER_CAULDRON_BLOCK.getDefaultState());
+                                    player.getEntityWorld().setBlockState(pos, BlockInit.COPPER_WATER_CAULDRON_BLOCK.getDefaultState());
                                 }
-                                player.getWorld().emitGameEvent(null, GameEvent.BLOCK_CHANGE, pos);
+                                player.getEntityWorld().emitGameEvent(null, GameEvent.BLOCK_CHANGE, pos);
                             }
                         } else {
                             if (((CampfireCauldronBlock) state.getBlock()).isFull(state)) {
                                 return super.useOnBlock(context);
                             }
-                            player.getWorld().setBlockState(pos, state.cycle(CampfireCauldronBlock.LEVEL));
+                            player.getEntityWorld().setBlockState(pos, state.cycle(CampfireCauldronBlock.LEVEL));
                         }
-                        player.getWorld().playSound(null, pos, SoundInit.EMPTY_FLASK_EVENT, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                        player.getEntityWorld().playSound(null, pos, SoundInit.EMPTY_FLASK_EVENT, SoundCategory.BLOCKS, 1.0F, 1.0F);
                         player.incrementStat(Stats.USE_CAULDRON);
 
                         if (flaskComponent.fillLevel() > 0) {
                             itemStack.set(ItemInit.FLASK_DATA, new FlaskComponent(flaskComponent.fillLevel() - 1, flaskComponent.qualityLevel()));
                         }
                     }
-                    return ActionResult.success(player.getWorld().isClient());
+                    return player.getEntityWorld().isClient() ? ActionResult.SUCCESS : ActionResult.SUCCESS_SERVER;
                 }
             } else if (state.getBlock() instanceof LeveledCauldronBlock && state.get(LeveledCauldronBlock.LEVEL) > 0 && flaskComponent.fillLevel() < 2 + this.addition) {
                 // Fill up flask
-                if (!player.getWorld().isClient()) {
-                    player.getWorld().playSound(null, pos, SoundInit.FILL_FLASK_EVENT, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                if (!player.getEntityWorld().isClient()) {
+                    player.getEntityWorld().playSound(null, pos, SoundInit.FILL_FLASK_EVENT, SoundCategory.BLOCKS, 1.0F, 1.0F);
                     player.incrementStat(Stats.USE_CAULDRON);
-                    LeveledCauldronBlock.decrementFluidLevel(state, player.getWorld(), pos);
+                    LeveledCauldronBlock.decrementFluidLevel(state, player.getEntityWorld(), pos);
                     itemStack.set(ItemInit.FLASK_DATA, new FlaskComponent(flaskComponent.fillLevel() + 1, 2));
                 }
-                return ActionResult.success(player.getWorld().isClient());
+                return player.getEntityWorld().isClient() ? ActionResult.SUCCESS : ActionResult.SUCCESS_SERVER;
             }
         }
         return super.useOnBlock(context);
     }
 
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+    public ActionResult use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
         FlaskComponent flaskComponent = itemStack.getOrDefault(ItemInit.FLASK_DATA, FlaskComponent.DEFAULT);
         BlockHitResult hitResult = raycast(world, user, RaycastContext.FluidHandling.SOURCE_ONLY);
@@ -133,7 +135,7 @@ public class LeatherFlask extends Item {
             if (user.isSneaking() && flaskComponent.fillLevel() != 0) {
                 itemStack.set(ItemInit.FLASK_DATA, new FlaskComponent(0, flaskComponent.qualityLevel()));
                 world.playSound(user, user.getX(), user.getY(), user.getZ(), SoundInit.EMPTY_FLASK_EVENT, SoundCategory.NEUTRAL, 1.0F, 1.0F);
-                return TypedActionResult.consume(itemStack);
+                return ActionResult.CONSUME.withNewHandStack(itemStack);
             }
             if (flaskComponent.fillLevel() < 2 + addition) {
                 int fillLevel = 2 + addition;
@@ -152,11 +154,11 @@ public class LeatherFlask extends Item {
 
                 world.playSound(user, user.getX(), user.getY(), user.getZ(), SoundInit.FILL_FLASK_EVENT, SoundCategory.NEUTRAL, 1.0F, 1.0F);
                 itemStack.set(ItemInit.FLASK_DATA, new FlaskComponent(fillLevel, waterPurity));
-                return TypedActionResult.consume(itemStack);
+                return ActionResult.CONSUME.withNewHandStack(itemStack);
             }
         }
         if (flaskComponent.fillLevel() == 0) {
-            return TypedActionResult.pass(itemStack);
+            return ActionResult.PASS;
         } else {
             return ItemUsage.consumeHeldItem(world, user, hand);
         }
@@ -203,10 +205,10 @@ public class LeatherFlask extends Item {
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
+    public void appendTooltip(ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
         FlaskComponent flaskComponent = stack.getOrDefault(ItemInit.FLASK_DATA, FlaskComponent.DEFAULT);
         if (stack.get(ItemInit.FLASK_DATA) != null) {
-            tooltip.add(Text.translatable("item.dehydration.leather_flask.tooltip", flaskComponent.fillLevel(), addition + 2).formatted(Formatting.GRAY));
+            textConsumer.accept(Text.translatable("item.dehydration.leather_flask.tooltip", flaskComponent.fillLevel(), addition + 2).formatted(Formatting.GRAY));
             if (flaskComponent.fillLevel() > 0) {
                 String string = "dirty";
                 if (flaskComponent.qualityLevel() == 1) {
@@ -214,12 +216,12 @@ public class LeatherFlask extends Item {
                 } else if (flaskComponent.qualityLevel() == 0) {
                     string = "purified";
                 }
-                tooltip.add(Text.translatable("item.dehydration.leather_flask.tooltip3." + string));
+                textConsumer.accept(Text.translatable("item.dehydration.leather_flask.tooltip3." + string));
             }
         } else {
-            tooltip.add(Text.translatable("item.dehydration.leather_flask.tooltip2", addition + 2).formatted(Formatting.GRAY));
+            textConsumer.accept(Text.translatable("item.dehydration.leather_flask.tooltip2", addition + 2).formatted(Formatting.GRAY));
         }
-        super.appendTooltip(stack, context, tooltip, type);
+        super.appendTooltip(stack, context, displayComponent, textConsumer, type);
     }
 
     @Override

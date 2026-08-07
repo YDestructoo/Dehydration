@@ -5,8 +5,8 @@ import net.dehydration.init.BlockInit;
 import net.dehydration.init.ConfigInit;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper.WrapperLookup;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -19,15 +19,15 @@ public class CampfireCauldronEntity extends BlockEntity {
     }
 
     @Override
-    public void readData(NbtCompound tag, WrapperLookup registryLookup) {
-        super.readData(tag, registryLookup);
-        this.isBoiled = tag.getBoolean("Boiled");
+    protected void readData(ReadView view) {
+        super.readData(view);
+        this.isBoiled = view.getBoolean("Boiled", false);
     }
 
     @Override
-    public void writeData(NbtCompound tag, WrapperLookup registryLookup) {
-        super.writeData(tag, registryLookup);
-        tag.putBoolean("Boiled", isBoiled);
+    protected void writeData(WriteView view) {
+        super.writeData(view);
+        view.putBoolean("Boiled", isBoiled);
     }
 
     public static void clientTick(World world, BlockPos pos, BlockState state, CampfireCauldronEntity blockEntity) {

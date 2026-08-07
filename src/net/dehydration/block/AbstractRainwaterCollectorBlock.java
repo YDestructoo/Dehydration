@@ -20,7 +20,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ItemActionResult;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -52,10 +52,10 @@ public abstract class AbstractRainwaterCollectorBlock extends Block {
     }
 
     @Override
-    protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    protected ActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         Storage<FluidVariant> storage = FluidStorage.SIDED.find(world, pos, hit.getSide().getOpposite());
         if (storage != null && FluidStorageUtil.interactWithFluidStorage(storage, player, hand)) {
-            return ItemActionResult.success(world.isClient());
+            return world.isClient() ? ActionResult.SUCCESS : ActionResult.SUCCESS_SERVER;
         }
         ItemStack itemStack = player.getStackInHand(hand);
         RainwaterCollectorBehavior collectorBehavior = this.behaviorMap.get(itemStack.getItem());

@@ -7,6 +7,7 @@ import net.dehydration.block.entity.CampfireCauldronEntity;
 import net.dehydration.block.entity.CopperCauldronBehavior;
 import net.dehydration.block.entity.RainwaterCollectorBehavior;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.piston.PistonBehavior;
@@ -42,8 +43,8 @@ public class BlockInit {
             new RainwaterLeveledCollectorBlock(AbstractBlock.Settings.copy(Blocks.BARREL), RainwaterLeveledCollectorBlock.RAIN_PREDICATE, RainwaterCollectorBehavior.PURIFIED_WATER_RAINWATER_COLLECTOR_BEHAVIOR));
 
     // Entity
-    public static BlockEntityType<CampfireCauldronEntity> CAMPFIRE_CAULDRON_ENTITY = BlockEntityType.Builder.create(CampfireCauldronEntity::new, CAMPFIRE_CAULDRON_BLOCK).build(null);
-    public static final BlockEntityType<BambooPumpEntity> BAMBOO_PUMP_ENTITY = BlockEntityType.Builder.create(BambooPumpEntity::new, BAMBOO_PUMP_BLOCK).build(null);
+    public static BlockEntityType<CampfireCauldronEntity> CAMPFIRE_CAULDRON_ENTITY = FabricBlockEntityTypeBuilder.create(CampfireCauldronEntity::new, CAMPFIRE_CAULDRON_BLOCK).build();
+    public static final BlockEntityType<BambooPumpEntity> BAMBOO_PUMP_ENTITY = FabricBlockEntityTypeBuilder.create(BambooPumpEntity::new, BAMBOO_PUMP_BLOCK).build();
 
     private static Block register(String id, boolean addItemGroup, Block block) {
         return register(DehydrationMain.identifierOf(id), addItemGroup, block);

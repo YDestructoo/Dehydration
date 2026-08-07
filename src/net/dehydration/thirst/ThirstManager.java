@@ -28,7 +28,7 @@ public class ThirstManager {
     }
 
     public void update(PlayerEntity player) {
-        Difficulty difficulty = player.getWorld().getDifficulty();
+        Difficulty difficulty = player.getEntityWorld().getDifficulty();
         if (this.dehydration > 4.0F) {
             this.dehydration -= 4.0F;
             if (difficulty != Difficulty.PEACEFUL) {

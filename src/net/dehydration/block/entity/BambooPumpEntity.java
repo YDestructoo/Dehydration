@@ -19,6 +19,8 @@ import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.registry.RegistryWrapper.WrapperLookup;
 import net.minecraft.util.collection.DefaultedList;
@@ -36,16 +38,16 @@ public class BambooPumpEntity extends BlockEntity implements Inventory {
     }
 
     @Override
-    public void readData(NbtCompound nbt, WrapperLookup registryLookup) {
-        super.readData(nbt, registryLookup);
+    protected void readData(ReadView view) {
+        super.readData(view);
         this.inventory.clear();
-        Inventories.readData(nbt, inventory, registryLookup);
+        Inventories.readData(view, inventory);
     }
 
     @Override
-    public void writeData(NbtCompound nbt, WrapperLookup registryLookup) {
-        super.writeData(nbt, registryLookup);
-        Inventories.writeData(nbt, inventory, registryLookup);
+    protected void writeData(WriteView view) {
+        super.writeData(view);
+        Inventories.writeData(view, inventory);
     }
 
     @Override
@@ -115,7 +117,7 @@ public class BambooPumpEntity extends BlockEntity implements Inventory {
 
     @Override
     public ItemStack getStack(int slot) {
-        return this.inventory.getName(0);
+        return this.inventory.get(slot);
     }
 
     @Override

@@ -60,10 +60,10 @@ public class ThirstHudRender {
                     for (variable_one = 0; variable_one < 10; ++variable_one) {
                         variable_three = height;
                         if (thirstManager.dehydration >= 4.0F && ticks % (thirst * 3 + 1) == 0) {
-                            variable_three = height + (playerEntity.getWorld().getRandom().nextInt(3) - 1); // bouncy
+                            variable_three = height + (playerEntity.getEntityWorld().getRandom().nextInt(3) - 1); // bouncy
                             thirstManager.dehydration -= 4.0F;
                         } else if (ticks % (thirst * 8 + 3) == 0) {
-                            variable_three = height + (playerEntity.getWorld().getRandom().nextInt(3) - 1); // bouncy
+                            variable_three = height + (playerEntity.getEntityWorld().getRandom().nextInt(3) - 1); // bouncy
                         }
                         int uppderCoord = 9;
                         if (ConfigInit.CONFIG.other_droplet_texture) {

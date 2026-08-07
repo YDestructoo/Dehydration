@@ -15,7 +15,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ItemActionResult;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
@@ -40,7 +40,7 @@ public class CauldronBehaviorAccess {
                 world.emitGameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return ItemActionResult.success(world.isClient());
+            return world.isClient() ? ActionResult.SUCCESS : ActionResult.SUCCESS_SERVER;
         };
         EMPTY_CAULDRON_BEHAVIOR_MAP.put(ItemInit.WATER_BOWL, EMPTY_CAULDRON_DRAIN_BOWL);
         EMPTY_CAULDRON_BEHAVIOR_MAP.put(ItemInit.PURIFIED_WATER_BOWL, EMPTY_CAULDRON_DRAIN_BOWL);
@@ -58,9 +58,9 @@ public class CauldronBehaviorAccess {
                     world.emitGameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return ItemActionResult.success(world.isClient());
+                return world.isClient() ? ActionResult.SUCCESS : ActionResult.SUCCESS_SERVER;
             }
-            return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return ActionResult.PASS_TO_DEFAULT_BLOCK_ACTION;
         };
         WATER_CAULDRON_BEHAVIOR_MAP.put(ItemInit.WATER_BOWL, WATER_CAULDRON_DRAIN_BOWL);
         WATER_CAULDRON_BEHAVIOR_MAP.put(ItemInit.PURIFIED_WATER_BOWL, WATER_CAULDRON_DRAIN_BOWL);
@@ -82,16 +82,16 @@ public class CauldronBehaviorAccess {
                     world.emitGameEvent(null, GameEvent.FLUID_PICKUP, pos);
                 }
 
-                return ItemActionResult.success(world.isClient());
+                return world.isClient() ? ActionResult.SUCCESS : ActionResult.SUCCESS_SERVER;
             }
-            return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return ActionResult.PASS_TO_DEFAULT_BLOCK_ACTION;
         };
         WATER_CAULDRON_BEHAVIOR_MAP.put(Items.BOWL, WATER_CAULDRON_FILL_BOWL);
     }
 
-    public static ItemActionResult fillFromCauldron(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, ItemStack stack, ItemStack output, Predicate<BlockState> predicate, SoundEvent soundEvent) {
+    public static ActionResult fillFromCauldron(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, ItemStack stack, ItemStack output, Predicate<BlockState> predicate, SoundEvent soundEvent) {
         if (!predicate.test(state)) {
-            return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return ActionResult.PASS_TO_DEFAULT_BLOCK_ACTION;
         }
         if (!world.isClient()) {
             Item item = stack.getItem();
@@ -107,6 +107,6 @@ public class CauldronBehaviorAccess {
             world.playSound(null, pos, soundEvent, SoundCategory.BLOCKS, 1.0F, 1.0F);
             world.emitGameEvent(null, GameEvent.FLUID_PICKUP, pos);
         }
-        return ItemActionResult.success(world.isClient());
+        return world.isClient() ? ActionResult.SUCCESS : ActionResult.SUCCESS_SERVER;
     }
 }

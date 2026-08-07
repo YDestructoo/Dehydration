@@ -13,7 +13,7 @@ import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -34,7 +34,7 @@ public abstract class PotionItemMixin extends Item {
     }
 
     @Inject(method = "use", at = @At("HEAD"), cancellable = true)
-    private void useMixin(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> info) {
+    private void useMixin(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<ActionResult> info) {
         BlockHitResult hitResult = Item.raycast(world, user, RaycastContext.FluidHandling.SOURCE_ONLY);
         if (((HitResult) hitResult).getType() == HitResult.Type.BLOCK) {
             BlockPos blockPos = hitResult.getBlockPos();

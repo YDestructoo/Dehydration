@@ -29,7 +29,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -85,13 +85,13 @@ public class EventInit {
                                 world.setBlockState(blockPos, Blocks.AIR.getDefaultState());
                             }
                         }
-                        return TypedActionResult.success(player.getStackInHand(hand), true);
+                        return (world.isClient() ? ActionResult.SUCCESS : ActionResult.SUCCESS_SERVER).withNewHandStack(player.getStackInHand(hand));
                     } else {
-                        return TypedActionResult.pass(player.getStackInHand(hand));
+                        return ActionResult.PASS;
                     }
                 }
             }
-            return TypedActionResult.pass(player.getStackInHand(hand));
+            return ActionResult.PASS;
         });
         
         UseBlockCallback.EVENT.register((player, world, hand, result) -> {
@@ -104,7 +104,7 @@ public class EventInit {
                         if (thirstManager.isNotFull()) {
                             int drinkTime = ((PlayerAccess) player).getDrinkTime();
                             if (world.isClient() && drinkTime % 3 == 0)
-                                player.playSound(SoundEvents.ENTITY_GENERIC_DRINK, 0.5f, world.getRandom().nextFloat() * 0.1f + 0.9f);
+                                player.playSound(SoundEvents.ENTITY_GENERIC_DRINK.value(), 0.5f, world.getRandom().nextFloat() * 0.1f + 0.9f);
 
                             if (drinkTime > 20) {
                                 if (!world.isClient()) {

@@ -16,6 +16,7 @@ import net.minecraft.item.Item;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.FluidTags;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -136,7 +137,7 @@ public abstract class PurifiedWaterFluid extends FlowableFluid {
         }
 
         @Override
-        protected boolean isInfinite(World var1) {
+        protected boolean isInfinite(ServerWorld world) {
             return false;
         }
     }
@@ -153,7 +154,7 @@ public abstract class PurifiedWaterFluid extends FlowableFluid {
         }
 
         @Override
-        protected boolean isInfinite(World var1) {
+        protected boolean isInfinite(ServerWorld world) {
             return false;
         }
     }
