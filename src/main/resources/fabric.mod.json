@@ -1,52 +1,14 @@
 {
   "schemaVersion": 1,
-  "id": "dehydration",
+  "id": "tklogin",
   "version": "${version}",
-  "name": "Dehydration",
-  "description": "Stay hydrated and keep calm",
-  "authors": [
-    "Globox_Z"
-  ],
-  "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/dehydration",
-    "sources": "https://github.com/Globox1997/Dehydration",
-    "issues": "https://github.com/Globox1997/Dehydration/issues"
-  },
-  "license": "GPLv3",
-  "icon": "assets/dehydration/icon.png",
+  "name": "1.21 Token Login",
+  "description": "a Fabric mod for 1.21+ that allows you to easily login with access tokens.",
+  "authors": ["VillainsRule"],
+  "contact": {"homepage": "None", "sources": "https://github.com/VillainsRule/1.21TokenLogin"},
+  "license": "CC0-1.0",
   "environment": "*",
-  "entrypoints": {
-    "main": [
-      "net.dehydration.DehydrationMain"
-    ],
-    "client": [
-      "net.dehydration.DehydrationClient"
-    ],
-    "modmenu": [
-      "net.dehydration.config.ModMenuIntegration"
-    ],
-    "emi": [
-      "net.dehydration.compat.DehydrationEmiPlugin"
-    ]
-  },
-  "mixins": [
-    "dehydration.mixins.json"
-  ],
-  "depends": {
-    "java": ">=21",
-    "minecraft": ">=${minecraft_version}",
-    "fabric-api": ">=${fabric_version}",
-    "fabricloader": ">=${loader_version}",
-    "cloth-config2": ">=${cloth_config_version}"
-  },
-  "suggests": {
-    "environmentz": "*",
-    "puddles": "*"
-  },
-  "custom": {
-    "mc-publish": {
-      "modrinth": "qWDh3G0p",
-      "curseforge": 410830
-    }
-  }
+  "entrypoints": {"main": ["xyz.villainsrule.TokenLoginMod"]},
+  "mixins": ["tklogin.mixins.json"],
+  "depends": {"fabricloader": ">=0.16.10", "minecraft": ">=1.21.9", "java": ">=21"}
 }
